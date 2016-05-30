@@ -101,6 +101,13 @@ function minart_mod_searchsubmit( $html ) {
 }
 add_filter( 'get_search_form', 'minart_mod_searchsubmit' );
 
+// increase max custom fields shown in dropdown
+
+add_filter( 'postmeta_form_limit' , 'customfield_limit_increase' );
+function customfield_limit_increase( $limit ) {
+  $limit = 100;
+  return $limit;
+}
 
 // includes
 
