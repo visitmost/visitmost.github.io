@@ -129,7 +129,7 @@ function exportBookToAbeBooks() {
 </script>
 
 <textarea style="width: 985px;height: 449px;" id="bookxml">
-<?=$book->asXML();?>
+<?=html_entity_decode($book->asXML(), ENT_QUOTES, "UTF-8");?>
 </textarea>
 
 <br />
