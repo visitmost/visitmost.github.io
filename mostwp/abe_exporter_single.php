@@ -55,7 +55,7 @@ $book = new SimpleXMLElement($xml);
 
 $book->AbebookList->Abebook->vendorBookID = $post_id;
 $book->AbebookList->Abebook->title = get_the_title($post_id);
-$book->AbebookList->Abebook->author = $post_meta['author'][0];
+$book->AbebookList->Abebook->author = $post_meta['Author'][0];
 $book->AbebookList->Abebook->publisher = $post_meta['Publisher'][0];
 $book->AbebookList->Abebook->subject = $post_meta['Subject'][0];
 $book->AbebookList->Abebook->price = $post_meta['Price'][0];
