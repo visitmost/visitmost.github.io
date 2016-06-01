@@ -100,11 +100,43 @@ $book->AbebookList->Abebook->publishYear = $post_meta['Year'][0];
 // QTY always hardcoded to 1 currently
 
 $book->AbebookList->Abebook->quantity = 1;
-
-echo $book->asXML();
-
-echo '<pre>';
-echo print_r($post_meta);
-echo '</pre>';
-
 ?>
+
+<html>
+<script>
+function exportBookToAbeBooks() {
+  document.getElementById("results").innerHTML = 'request sent, awaiting response...';
+
+  var r = new XMLHttpRequest(); 
+
+  r.open("POST", "https://inventoryupdate.abebooks.com:10027", true); 
+
+  r.onreadystatechange = function () { 
+    if (r.readyState != 4 || r.status != 200) return; 
+    document.getElementById("results").innerHTML = r.responseText;
+    //alert("Success: " + r.responseText); 
+  }; 
+
+//  r.setRequestHeader('Content-type', 'text/xml');
+  //r.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+  //xml_content = document.getElementById("bookxml").innerHTML;
+  xml_content = document.getElementById("bookxml").value;
+
+  r.send(xml_content);
+}
+
+</script>
+
+<textarea style="width: 985px;height: 449px;" id="bookxml">
+<?=$book->asXML();?>
+</textarea>
+
+<br />
+<button onclick=exportBookToAbeBooks();>Export to AbeBooks.com</button>
+<br />
+
+<textarea id="results" style="width: 985px;height: 200px;">
+...results will appear here...
+</textarea>
+</html>
