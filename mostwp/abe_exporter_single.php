@@ -96,6 +96,13 @@ $book->AbebookList->Abebook->description = $content;
 $book->AbebookList->Abebook->bookCondition = $post_meta['Condition'][0];
 $book->AbebookList->Abebook->publishPlace = $post_meta['Published location'][0];
 $book->AbebookList->Abebook->publishYear = $post_meta['Year'][0];
+$book->AbebookList->Abebook->isbn = $post_meta['ISBN'][0];
+$book->AbebookList->Abebook->size = $post_meta['Size'][0];
+$book->AbebookList->Abebook->jacketCondition = $post_meta['Dust jacket condition'][0];
+$book->AbebookList->Abebook->inscriptoin = $post_meta['Inscription'][0];
+
+
+// TODO: Book Type (ie, ex library): http://www.abebooks.com/docs/seller-help/inventory-update-api-user-guide.pdf
 
 // QTY always hardcoded to 1 currently
 
