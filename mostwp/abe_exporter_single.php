@@ -44,6 +44,10 @@ $xml  = <<<XML
      <publishPlace>PUBLISHPLACEPUBLISHPLACEPUBLISHPLACEPUBLISHPLACEPUBLISHPLACE</publishPlace>
      <publishYear>YEARYEARYEARYEARYEAR</publishYear>
      <quantity amount="1">1</quantity>
+     <isbn>000000000000000000</isbn>
+     <size>999999999999999999999</size>
+     <jacketCondition>JACKETCONDITIONJACKETCONDITIONJACKETCONDITIONJACKETCONDITION</jacketCondition>
+     <inscription>INSCRIPTIONINSCRIPTIONINSCRIPTIONINSCRIPTIONINSCRIPTION</inscription>
    </Abebook>
  </AbebookList>
 </inventoryUpdateRequest>
@@ -120,7 +124,7 @@ $book->AbebookList->Abebook->publishYear = $post_meta['Year'][0];
 $book->AbebookList->Abebook->isbn = $post_meta['ISBN'][0];
 $book->AbebookList->Abebook->size = $post_meta['Size'][0];
 $book->AbebookList->Abebook->jacketCondition = $post_meta['Dust jacket condition'][0];
-$book->AbebookList->Abebook->inscriptoin = $post_meta['Inscription'][0];
+$book->AbebookList->Abebook->inscription = $post_meta['Inscription'][0];
 
 
 // TODO: Book Type (ie, ex library): http://www.abebooks.com/docs/seller-help/inventory-update-api-user-guide.pdf
@@ -132,6 +136,7 @@ $book->AbebookList->Abebook->quantity = 1;
 
 $book_to_export = $book->asXML();
 $book_to_export = html_entity_decode($book_to_export);
+$book_to_export = str_replace('null', '', $book_to_export);
 
 ?>
 
@@ -163,13 +168,8 @@ function exportBookToAbeBooks() {
     }
 
     document.getElementById("results").innerHTML = r.responseText;
-    //alert("Success: " + r.responseText); 
-  }; 
+  } 
 
-//  r.setRequestHeader('Content-type', 'text/xml');
-  //r.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-  //xml_content = document.getElementById("bookxml").innerHTML;
   xml_content = document.getElementById("bookxml").value;
 
   r.send(xml_content);
