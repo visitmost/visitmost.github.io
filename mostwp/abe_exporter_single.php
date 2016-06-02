@@ -54,7 +54,11 @@ $book = new SimpleXMLElement($xml);
 // modify XML values as required
 
 $book->AbebookList->Abebook->vendorBookID = $post_id;
-$book->AbebookList->Abebook->title = get_the_title($post_id);
+
+$title = get_the_title($post_id);
+$title = str_replace("&#8217;","'", $title);
+$book->AbebookList->Abebook->title = $title;
+
 $book->AbebookList->Abebook->author = $post_meta['Author'][0];
 $book->AbebookList->Abebook->publisher = $post_meta['Publisher'][0];
 $book->AbebookList->Abebook->subject = $post_meta['Subject'][0];
@@ -90,6 +94,10 @@ $content = $content_post->post_content;
 $content = apply_filters('the_content', $content);
 $content = str_replace(']]>', ']]&gt;', $content);
 $content = strip_tags ($content);
+$content = str_replace("&#8216;","'", $content);
+$content = str_replace("&#8217;","'", $content);
+$content = str_replace("&#8220;",'"', $content);
+$content = str_replace("&#8221;",'"', $content);
 
 $book->AbebookList->Abebook->description = $content;
 
@@ -107,9 +115,17 @@ $book->AbebookList->Abebook->inscriptoin = $post_meta['Inscription'][0];
 // QTY always hardcoded to 1 currently
 
 $book->AbebookList->Abebook->quantity = 1;
+
+
+$book_to_export = $book->asXML();
+$book_to_export = html_entity_decode($book_to_export);
+
 ?>
 
 <html>
+<head>
+		<meta charset="ISO-8859-1" />
+</head>
 <script>
 function exportBookToAbeBooks() {
   document.getElementById("results").innerHTML = 'request sent, awaiting response...';
@@ -136,7 +152,7 @@ function exportBookToAbeBooks() {
 </script>
 
 <textarea style="width: 985px;height: 449px;" id="bookxml">
-<?=html_entity_decode($book->asXML(), ENT_QUOTES, "UTF-8");?>
+<?=$book_to_export;?>
 </textarea>
 
 <br />
