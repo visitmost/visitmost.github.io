@@ -8,6 +8,14 @@ $post_id = $_GET['id'];
 // get all the post meta
 $post_meta = get_post_meta($post_id);
 
+// warnings
+$warnings = [];
+
+if ($post_meta['Price'][0] == '') {
+  $warnings['Price'] = 'not set';
+}
+
+
 // custom format to AbeBooks style
 
 $xml  = <<<XML
@@ -93,11 +101,16 @@ $content_post = get_post($post_id);
 $content = $content_post->post_content;
 $content = apply_filters('the_content', $content);
 $content = str_replace(']]>', ']]&gt;', $content);
+$content = str_replace('&', 'and', $content);
 $content = strip_tags ($content);
 $content = str_replace("&#8216;","'", $content);
 $content = str_replace("&#8217;","'", $content);
 $content = str_replace("&#8220;",'"', $content);
 $content = str_replace("&#8221;",'"', $content);
+$content = str_replace("#038;",'', $content);
+$content = str_replace(":",' ', $content);
+//$content = str_replace("+",' ', $content);
+//$content = str_replace("-",' ', $content);
 
 $book->AbebookList->Abebook->description = $content;
 
@@ -126,6 +139,13 @@ $book_to_export = html_entity_decode($book_to_export);
 <head>
 		<meta charset="ISO-8859-1" />
 </head>
+
+<?
+if (count($warnings) > 0){
+  print_r($warnings);
+}
+?>
+
 <script>
 function exportBookToAbeBooks() {
   document.getElementById("results").innerHTML = 'request sent, awaiting response...';
@@ -136,6 +156,12 @@ function exportBookToAbeBooks() {
 
   r.onreadystatechange = function () { 
     if (r.readyState != 4 || r.status != 200) return; 
+    if (r.responseText.indexOf('<code>600</code>') > -1) {
+      document.getElementById("results").style.backgroundColor = '#99ff66';
+    } else {
+      document.getElementById("results").style.backgroundColor = 'orange';
+    }
+
     document.getElementById("results").innerHTML = r.responseText;
     //alert("Success: " + r.responseText); 
   }; 
