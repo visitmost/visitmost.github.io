@@ -5,6 +5,13 @@ require_once(dirname(__FILE__) . '/wp-load.php');
 
 $post_id = $_GET['id'];
 
+$send_images = False;
+
+// send image request made
+if(isset($_GET['transfer_files'])){
+  $send_images = True;
+}
+
 // get all the post meta
 $post_meta = get_post_meta($post_id);
 
@@ -15,9 +22,7 @@ if ($post_meta['Price'][0] == '') {
   $warnings['Price'] = 'not set';
 }
 
-
 // custom format to AbeBooks style
-
 $xml  = <<<XML
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <inventoryUpdateRequest version="1.0">
@@ -109,15 +114,16 @@ $content = str_replace('&', 'and', $content);
 $content = strip_tags ($content);
 $content = str_replace("&#8216;","'", $content);
 $content = str_replace("&#8217;","'", $content);
+$content = str_replace("#8216;","'", $content);
+$content = str_replace("#8217;","'", $content);
 $content = str_replace("&#8220;",'"', $content);
 $content = str_replace("&#8221;",'"', $content);
+$content = str_replace("#8220;",'"', $content);
+$content = str_replace("#8221;",'"', $content);
 $content = str_replace("#038;",'', $content);
 $content = str_replace(":",' ', $content);
-//$content = str_replace("+",' ', $content);
-//$content = str_replace("-",' ', $content);
-
+$content = rtrim($content);
 $book->AbebookList->Abebook->description = $content;
-
 $book->AbebookList->Abebook->bookCondition = $post_meta['Condition'][0];
 $book->AbebookList->Abebook->publishPlace = $post_meta['Published location'][0];
 $book->AbebookList->Abebook->publishYear = $post_meta['Year'][0];
@@ -125,18 +131,51 @@ $book->AbebookList->Abebook->isbn = $post_meta['ISBN'][0];
 $book->AbebookList->Abebook->size = $post_meta['Size'][0];
 $book->AbebookList->Abebook->jacketCondition = $post_meta['Dust jacket condition'][0];
 $book->AbebookList->Abebook->inscription = $post_meta['Inscription'][0];
-
-
 // TODO: Book Type (ie, ex library): http://www.abebooks.com/docs/seller-help/inventory-update-api-user-guide.pdf
 
 // QTY always hardcoded to 1 currently
-
 $book->AbebookList->Abebook->quantity = 1;
-
 
 $book_to_export = $book->asXML();
 $book_to_export = html_entity_decode($book_to_export);
 $book_to_export = str_replace('null', '', $book_to_export);
+
+$book_images = [];
+
+$dom = new domDocument;
+$dom->loadHTML($content_post->post_content);
+$dom->preserveWhiteSpace = false;
+$images = $dom->getElementsByTagName('img');
+
+if ($send_images == True){
+  include('Net/SFTP.php');
+
+  $sftp = new Net_SFTP('ftp.abebooks.com');
+  if (!$sftp->login(getenv('ABE_FTP_USERNAME'), getenv('ABE_FTP_PASSWORD'))) {
+      exit('Login Failed');
+  }
+}
+
+$x = 1;
+foreach ($images as $image) {
+  $image_url = $image->getAttribute('src');
+  $book_images[] = $image_url;
+
+  $remote_file = $post_id . '_' . $x . '.jpg';
+
+  if ($send_images == True){
+    // prob need to load the file in here from local, vs the 192.... url it has
+    /////////////
+    $local_image_url = str_replace('http://localhost:8888', '', $image_url);
+
+    echo $remote_file;
+    echo $local_image_url;
+    //$sftp->put($remote_file, $local_image_url, NET_SFTP_LOCAL_FILE);
+    $sftp->put($remote_file, $local_image_url);
+  }
+
+  $x += 1;
+}
 
 ?>
 
@@ -175,6 +214,9 @@ function exportBookToAbeBooks() {
   r.send(xml_content);
 }
 
+function transferImagesViaFTP() {
+  window.location = window.location.href + '&transfer_files=TRUE';
+}
 </script>
 
 <textarea style="width: 985px;height: 449px;" id="bookxml">
@@ -183,9 +225,21 @@ function exportBookToAbeBooks() {
 
 <br />
 <button onclick=exportBookToAbeBooks();>Export to AbeBooks.com</button>
+<button onclick=transferImagesViaFTP();>Transfer images via sFTP</button>
 <br />
 
 <textarea id="results" style="width: 985px;height: 200px;">
 ...results will appear here...
 </textarea>
+
+<br />
+
+<? foreach($book_images as $book_image): ?>
+
+<img src="<?=$book_image;?>" style="height:200px;"/>
+
+
+<? endforeach; ?>
+
 </html>
+

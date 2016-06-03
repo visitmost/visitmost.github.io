@@ -1,0 +1,397 @@
+/* 
+    Document   : edik
+    Created on : Sep 20, 2013, 11:53:32 AM
+    Author     : vac
+    Description:
+        Main Stylesheet.
+*/
+
+#edik-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    font-family: Arial;
+    font-size: 14px;
+    overflow: hidden;
+}
+
+#edik-container h2 {
+    margin: 5px 2px 4px 0;
+    border-bottom: 1px solid #d3d3d3;
+    font-size: 14px;
+    padding-bottom: 2px;
+}
+
+#edik-container .edik-filter {
+    position: relative;
+    border-bottom: 1px dotted lightgray;
+}
+
+#edik-container .edik-slider-noui {
+    display: none;
+    height: 25px;
+    position: absolute;
+    top: 0;
+    background-color: #FFF;
+    width: 182px;
+    z-index: 50;
+}
+
+#edik-container .edik-filter:hover {
+    background: honeydew;
+}
+
+#edik-instruments {
+    list-style-type: none;
+    float: left;
+    margin: 0px 15px 0 0;
+    width: 222px;
+}
+
+#edik-instruments li {
+    margin: 0px;
+    overflow: hidden;
+}
+
+#edik-instruments label {
+    font-size: 13px;
+}
+
+#edik-canvas-cont {
+    width: 650px;
+    height: 500px;
+    overflow: auto;
+    border: 1px solid #d3d3d3;
+    font-size: 0px;
+    line-height: 0px;
+}
+
+#edik-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    opacity: 0.9;
+    background: #d3d3d3 url('../img/loader.gif') center center no-repeat;
+    text-align: center;
+    display: none;
+}
+
+#edik-overlay span {
+    line-height: 560px;
+}
+
+/* Main hidden canvas */
+#edik-canvas {
+    float: left;
+    display: none;
+}
+
+/* ********************** */
+/* * Edik Buttons Style * */
+/* ********************** */
+#edik-container input[type="button"] {
+    -moz-box-shadow: 0px 10px 14px -7px #e0d3c0;
+    -webkit-box-shadow: 0px 10px 14px -7px #e0d3c0;
+    box-shadow: 0px 10px 14px -7px #e0d3c0;
+
+    border-radius: 4px;
+    cursor: pointer;
+
+    font-size:13px;
+    font-weight:bold;
+    padding:6px 12px;
+    text-decoration:none;
+
+    display:inline-block;
+}
+
+#edik-container input[type="button"]:active {
+    position:relative;
+    top:1px;
+}
+
+#edik-save{
+    float: left;
+
+    background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #77b55a), color-stop(1, #72b352));
+    background:-moz-linear-gradient(top, #77b55a 5%, #72b352 100%);
+    background:-webkit-linear-gradient(top, #77b55a 5%, #72b352 100%);
+    background:-o-linear-gradient(top, #77b55a 5%, #72b352 100%);
+    background:-ms-linear-gradient(top, #77b55a 5%, #72b352 100%);
+    background:linear-gradient(to bottom, #77b55a 5%, #72b352 100%);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#77b55a', endColorstr='#72b352',GradientType=0);
+
+    background-color:#77b55a;
+
+    -moz-border-radius:4px;
+    -webkit-border-radius:4px;
+
+    border:1px solid #77b55a;
+
+    color:#ffffff;
+
+    text-shadow:0px 1px 0px #5b8a3c;
+}
+#edik-save:hover {
+
+    background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #72b352), color-stop(1, #77b55a));
+    background:-moz-linear-gradient(top, #72b352 5%, #77b55a 100%);
+    background:-webkit-linear-gradient(top, #72b352 5%, #77b55a 100%);
+    background:-o-linear-gradient(top, #72b352 5%, #77b55a 100%);
+    background:-ms-linear-gradient(top, #72b352 5%, #77b55a 100%);
+    background:linear-gradient(to bottom, #72b352 5%, #77b55a 100%);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#72b352', endColorstr='#77b55a',GradientType=0);
+
+    background-color:#72b352;
+}
+
+#edik-reset {
+    float: right;
+    color: grey;
+    margin-bottom: 20px; /* To see shadows under buttons */
+    text-shadow:0px 1px 0px #CCC;
+    border:1px solid #DDD;
+}
+/* ********************** */
+
+/* ********************** */
+/* * Edik Filters styles  */
+/* ********************** */
+
+.edik-filter h3 {
+    height: 21px;
+    float: left;
+    width: 123px;
+    padding: 4px 0 0 0;
+    margin: 0 0 0 20px;
+    display: inline-block;
+    font-weight: normal;
+    font-size: 14px;
+}
+
+.edik-filter-value {
+    float: left;
+    margin-top: 4px;
+    width: 35px;
+    text-align: right;
+    background: #eeeeee;
+    padding-right: 2px;
+}
+
+.edik-filter-edit {
+    background-image: url(../img/ui-slider.png);
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    left: 0px;
+    top: 4px;
+    cursor: pointer;
+    opacity: 0.4;
+}
+
+.edik-filter-edit:hover {
+    opacity: 1;
+}
+
+.edik-filter-pm {
+    line-height: 1000px;
+    display: block;
+    width: 16px;
+    height: 16px;
+    overflow: hidden;
+    opacity: 0.3;
+    float: left;
+    margin: 4px 4px 0 0;
+}
+
+.edik-filter-pm:hover {
+    opacity: 0.5;
+}
+
+.edik-filter-pm[data-direction="plus"] {
+    background: url('../img/minus_plus.png') -16px 0px;
+}
+
+.edik-filter-pm[data-direction="minus"] {
+    background: url('../img/minus_plus.png');
+}
+
+
+/* ********************** */
+/* * Edik Tools styles  * */
+/* ********************** */
+
+.edik-tool-button {
+    width: 30px;
+    height: 30px;
+    float: left;
+    cursor: pointer;
+    margin: 0 5px 5px 0;
+    border: 1px solid lightsteelblue;
+    border-radius: 5px;
+    box-shadow: 1px 1px 5px #CCC;
+    background: no-repeat center center;
+}
+
+.edik-tool-button:active{
+    margin: 1px 4px 0 1px;
+    box-shadow: 0 0 0 #CCC;
+}
+
+.edik-tool-button.flip_hor {
+    background: url('../img/tools.png') no-repeat 0px 0px;
+}
+
+.edik-tool-button.flip_ver {
+    background: url('../img/tools.png') -90px 0px;
+}
+
+.edik-tool-button.invert {
+    background: url('../img/tools.png') no-repeat -30px 0px;
+}
+.edik-tool-button.invert.switched {
+    background: url('../img/tools.png') no-repeat -60px 0px;
+}
+
+.edik-tool-button.greyscale {
+    background: url('../img/tools.png') no-repeat -150px 0px;
+}
+
+.edik-tool-button.greyscale.switched {
+    background: url('../img/tools.png') no-repeat -180px 0px;
+}
+
+.edik-rotate.left {
+    background: url('../img/tools.png') no-repeat -210px 0px;
+}
+
+.edik-rotate.right {
+    background: url('../img/tools.png') no-repeat -120px 0px;
+}
+
+/*****************************/
+
+#edik-preview {
+    float: left;
+}
+
+#edik-preview h2 {
+    border: 0px;
+    padding-bottom: 0px;
+    float: left;
+    margin-bottom: 2px;
+}
+
+#edik-busy {
+    width: 208px;
+    height: 15px;
+    float: right;
+    background: url('../img/loader.gif') -6px -3px;
+    margin-top: 7px;
+    display: none;
+}
+
+.edik-hidden {
+    display: none;
+}
+
+/* ********************** */
+/* * Slider input style * */
+/* ********************** */
+.noUi-target * {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-touch-callout: none;
+    -ms-touch-action: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    cursor: default;
+}
+
+.noUi-base {
+    width: 170px;
+    height: 20px;
+    position: relative;
+    max-width: 100%;
+    max-height: 100%;
+    z-index: 100;
+    margin-left: 6px;
+}
+
+.noUi-handle {
+    background: url('../img/slider.png');
+    height: 21px;
+    width: 11px;
+    margin: 0 0 0 -6px;
+}
+
+.noUi-active {
+    background: url('../img/slider.png');
+    opacity: 0.8;
+}
+
+.noUi-active:after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    content: "";
+    display: block;
+    height: 100%;
+    border: 1px solid #DDD;
+}
+
+.noUi-connect {
+    background: Teal;
+}
+
+.noUi-background {
+    background: url('../img/slider_bg.png') repeat-x;
+}
+
+.noUi-origin {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 0;
+}
+
+.noUi-origin-upper {
+    background: inherit !important;
+}
+
+.noUi-z-index {
+    z-index: 10;
+}
+
+.noUi-vertical {
+    width: 40px;
+    height: 100%;
+}
+
+.noUi-vertical .noUi-origin {
+    bottom: 0;
+    left: 0;
+}
+
+.noUi-vertical .noUi-handle {
+    margin: -23px 0 0 -3px;
+}
+
+.noUi-target[disabled] .noUi-base {
+    background: #999;
+}
+
+.noUi-target[disabled] .noUi-connect {
+    background: #BBB;
+}
+
+.noUi-state-tap .noUi-origin {
+    -webkit-transition: left 0.3s, top 0.3s;
+    transition: left 0.3s, top 0.3s;
+}
+/**************************/

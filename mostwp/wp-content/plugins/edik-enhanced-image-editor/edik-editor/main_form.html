@@ -1,0 +1,105 @@
+<div id="edik-container">
+    <ul id="edik-instruments">
+        <li>
+            <h2>Tools</h2>
+        </li>
+        <li>
+            <div class="edik-tool-button edik-tool flip_hor" data-tool="flip_hor" data-value="0" title="Flip Horizontal"></div>
+            <div class="edik-tool-button edik-tool flip_ver" data-tool="flip_ver" data-value="0" title="Flip Vertical"></div>
+            <div class="edik-tool-button edik-tool greyscale" data-tool="greyscale" data-value="0" title="Greyscale"></div>
+            <div class="edik-tool-button edik-tool invert" data-tool="invert" data-value="0" title="Invert"></div>
+
+            <div class="edik-tool-button edik-rotate left" title="Rotate Counterclockwise"></div>
+            <div class="edik-tool-button edik-rotate right" title="Rotate Clockwise"></div>
+        </li>
+        <li>
+            <h2>Filters</h2>
+        </li>
+        <li class="edik-filter">
+            <div class="edik-filter-edit"></div>
+            <h3>Brightness</h3>
+            <div class="edik-slider-noui" id="brightness_slider" data-tool="brightness"></div>
+            <a href="#" class="edik-filter-pm" data-tool="brightness" data-direction="minus">-</a>
+            <a href="#" class="edik-filter-pm" data-tool="brightness" data-direction="plus">+</a>
+            <span class="edik-filter-value" id="brightnessValue">0</span>
+        </li>
+        <li class="edik-filter">
+            <div class="edik-filter-edit"></div>
+            <h3>Contrast</h3>
+            <div class="edik-slider-noui" id="contrast_slider" data-tool="contrast"></div>
+            <a href="#" class="edik-filter-pm" data-tool="contrast" data-direction="minus">-</a>
+            <a href="#" class="edik-filter-pm" data-tool="contrast" data-direction="plus">+</a>
+            <span class="edik-filter-value" id="contrastValue">0</span>
+        </li>
+        <li class="edik-filter">
+            <div class="edik-filter-edit"></div>
+            <h3>Saturation</h3>
+            <div class="edik-slider-noui" id="saturation_slider" data-tool="saturation"></div>
+            <a href="#" class="edik-filter-pm" data-tool="saturation" data-direction="minus">-</a>
+            <a href="#" class="edik-filter-pm" data-tool="saturation" data-direction="plus">+</a>
+            <span class="edik-filter-value" id="saturationValue">0</span>
+        </li>
+        <li class="edik-filter">
+            <div class="edik-filter-edit"></div>
+            <h3>Vibrance</h3>
+            <div class="edik-slider-noui" id="vibrance_slider" data-tool="vibrance"></div>
+            <a href="#" class="edik-filter-pm" data-tool="vibrance" data-direction="minus">-</a>
+            <a href="#" class="edik-filter-pm" data-tool="vibrance" data-direction="plus">+</a>
+            <span class="edik-filter-value" id="vibranceValue">0</span>
+        </li>
+        <li class="edik-filter">
+            <div class="edik-filter-edit"></div>
+            <h3>Exposure</h3>
+            <div class="edik-slider-noui" id="exposure_slider" data-tool="exposure"></div>
+            <a href="#" class="edik-filter-pm" data-tool="exposure" data-direction="minus">-</a>
+            <a href="#" class="edik-filter-pm" data-tool="exposure" data-direction="plus">+</a>
+            <span class="edik-filter-value" id="exposureValue">0</span>
+        </li>
+        <li class="edik-filter">
+            <div class="edik-filter-edit"></div>
+            <h3>Hue</h3>
+            <div class="edik-slider-noui" id="hue_slider" data-tool="hue"></div>
+            <a href="#" class="edik-filter-pm" data-tool="hue" data-direction="minus">-</a>
+            <a href="#" class="edik-filter-pm" data-tool="hue" data-direction="plus">+</a>
+            <span class="edik-filter-value" id="hueValue">0</span>
+        </li>
+        <li class="edik-filter">
+            <div class="edik-filter-edit"></div>
+            <h3>Sepia</h3>
+            <div class="edik-slider-noui" id="sepia_slider" data-tool="sepia"></div>
+            <a href="#" class="edik-filter-pm" data-tool="sepia" data-direction="minus">-</a>
+            <a href="#" class="edik-filter-pm" data-tool="sepia" data-direction="plus">+</a>
+            <span class="edik-filter-value" id="sepiaValue">0</span>
+        </li>
+        <li class="edik-filter">
+            <div class="edik-filter-edit"></div>
+            <h3>Noise</h3>
+            <div class="edik-slider-noui" id="noise_slider" data-tool="noise"></div>
+            <a href="#" class="edik-filter-pm" data-tool="noise" data-direction="minus">-</a>
+            <a href="#" class="edik-filter-pm" data-tool="noise" data-direction="plus">+</a>
+            <span class="edik-filter-value" id="noiseValue">0</span>
+        </li>
+        <li class="edik-filter">
+            <div class="edik-filter-edit"></div>
+            <h3>Clip</h3>
+            <div class="edik-slider-noui" id="clip_slider" data-tool="clip"></div>
+            <a href="#" class="edik-filter-pm" data-tool="clip" data-direction="minus">-</a>
+            <a href="#" class="edik-filter-pm" data-tool="clip" data-direction="plus">+</a>
+            <span class="edik-filter-value" id="clipValue">0</span>
+        </li>
+        <li>
+            <br /><input type="button" value="Save image" id="edik-save"  />
+            <input type="button" value="Reset" id="edik-reset"/>
+        </li>
+    </ul>
+    <div id="edik-preview">
+    <div>
+        <h2>Image preview</h2>
+        <div id="edik-busy"></div>
+    </div>
+    <div id="edik-canvas-cont">
+        <canvas id="edik-canvas"></canvas>
+    </div>
+    </div>
+    <div id="edik-overlay"><span>Processing image</span></div>
+</div>
