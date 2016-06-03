@@ -7,7 +7,6 @@ $post_id = $_GET['id'];
 
 $send_images = False;
 
-// send image request made
 if(isset($_GET['transfer_files'])){
   $send_images = True;
 }
@@ -15,7 +14,6 @@ if(isset($_GET['transfer_files'])){
 // get all the post meta
 $post_meta = get_post_meta($post_id);
 
-// warnings
 $warnings = [];
 
 if ($post_meta['Price'][0] == '') {
@@ -65,17 +63,14 @@ $xml = str_replace(
 );
 
 // make XML object out of sample XML
-
 $book = new SimpleXMLElement($xml);
 
 // modify XML values as required
-
 $book->AbebookList->Abebook->vendorBookID = $post_id;
 
 $title = get_the_title($post_id);
 $title = str_replace("&#8217;","'", $title);
 $book->AbebookList->Abebook->title = $title;
-
 $book->AbebookList->Abebook->author = $post_meta['Author'][0];
 $book->AbebookList->Abebook->publisher = $post_meta['Publisher'][0];
 $book->AbebookList->Abebook->subject = $post_meta['Subject'][0];
@@ -83,7 +78,6 @@ $book->AbebookList->Abebook->price = $post_meta['Price'][0];
 $book->AbebookList->Abebook->dustJacket = $post_meta['Dust jacket condition'][0];
 
 // update binding attribute and values
-
 if ( $post_meta['Binding'][0] == 'Hardback' || $post_meta['Binding'][0] == 'Hardcover') {
   $book->AbebookList->Abebook->binding = 'Hardback';
 } else if ( $post_meta['Binding'][0] == 'Paperback' || $post_meta['Binding'][0] == 'Softcover' ) {
@@ -105,7 +99,6 @@ $book->AbebookList->Abebook->signed = $post_meta['Signed'][0];
 $book->AbebookList->Abebook->booksellerCatalogue = $post_meta['Subject'][0];
 
 // compile a pretty description, including meta already known + actual post description
-
 $content_post = get_post($post_id);
 $content = $content_post->post_content;
 $content = apply_filters('the_content', $content);
@@ -164,19 +157,13 @@ foreach ($images as $image) {
   $remote_file = $post_id . '_' . $x . '.jpg';
 
   if ($send_images == True){
-    // prob need to load the file in here from local, vs the 192.... url it has
-    /////////////
     $local_image_url = str_replace('http://localhost:8888', '', $image_url);
 
-    echo $remote_file;
-    echo $local_image_url;
-    //$sftp->put($remote_file, $local_image_url, NET_SFTP_LOCAL_FILE);
-    $sftp->put($remote_file, $local_image_url);
+    $sftp->put($remote_file, '/Users/leon/visitmost.github.io/mostwp' . $local_image_url, NET_SFTP_LOCAL_FILE);
   }
 
   $x += 1;
 }
-
 ?>
 
 <html>
@@ -237,7 +224,6 @@ function transferImagesViaFTP() {
 <? foreach($book_images as $book_image): ?>
 
 <img src="<?=$book_image;?>" style="height:200px;"/>
-
 
 <? endforeach; ?>
 
