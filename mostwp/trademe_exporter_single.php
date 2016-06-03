@@ -1,8 +1,8 @@
 <?php
 
 // get TM auth config
-TM_CONSUMER_KEY = getenv('TM_CONSUMER_KEY');
-TM_CONSUMER_SECRET = getenv('TM_CONSUMER_SECRET');
+$TM_CONSUMER_KEY = getenv('TM_CONSUMER_KEY');
+$TM_CONSUMER_SECRET = getenv('TM_CONSUMER_SECRET');
 
 // get WP system loaded
 require_once(dirname(__FILE__) . '/wp-load.php');
@@ -22,39 +22,32 @@ if ($post_meta['Price'][0] == '') {
 
 // custom format to TradeMe style
 
+
 $xml  = <<<XML
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<inventoryUpdateRequest version="1.0">
-  <action name="bookupdate">
-   <username>BOOKSELLER_USERNAME</username>
-  <password>BOOKSELLER_PASSWORD</password>
- </action>
- <AbebookList>
-   <Abebook>
-     <transactionType>add</transactionType>
-     <vendorBookID>999999</vendorBookID>
-     <author>AUTHORAUTHORAUTHOR</author>
-     <title>TITLETITITLETITLE</title>
-     <publisher>PUBLISHERPUBLISHERPUBLISHER</publisher>
-     <subject>SUBJECTSUBJECTSUBJECT</subject>
-     <price currency="NZD">999999999999999.99</price>
-     <dustJacket>false</dustJacket>
-     <binding type="hard">BINDINGBINDINGBINDINGBINDING</binding>
-     <firstEdition>FIRSTEDITIONFIRSTEDITIONFIRSTEDITION</firstEdition>
-     <signed>false</signed>
-     <booksellerCatalogue>CATEGORYCATEGORYCATEGORYCATEGORYCATEGORY</booksellerCatalogue>
-     <description>DESCRIPTIONDESCRIPTIONDESCRIPTIONDESCRIPTIONDESCRIPTIONDESCRIPTION</description>
-     <bookCondition>CONDITIONCONDITIONCONDITIONCONDITIONCONDITION</bookCondition>
-     <publishPlace>PUBLISHPLACEPUBLISHPLACEPUBLISHPLACEPUBLISHPLACEPUBLISHPLACE</publishPlace>
-     <publishYear>YEARYEARYEARYEARYEAR</publishYear>
-     <quantity amount="1">1</quantity>
-     <isbn>000000000000000000</isbn>
-     <size>999999999999999999999</size>
-     <jacketCondition>JACKETCONDITIONJACKETCONDITIONJACKETCONDITIONJACKETCONDITION</jacketCondition>
-     <inscription>INSCRIPTIONINSCRIPTIONINSCRIPTIONINSCRIPTIONINSCRIPTION</inscription>
-   </Abebook>
- </AbebookList>
-</inventoryUpdateRequest>
+<ListingRequest xmlns="http://api.trademe.co.nz/v1">
+  <Category>3849</Category>
+  <Title>Arty surprise</Title>
+  <Description>
+    <Paragraph>All true art lovers will buy this.</Paragraph>
+  </Description>
+  <StartPrice>7</StartPrice>
+  <BuyNowPrice>9</BuyNowPrice>
+  <Duration>Seven</Duration>
+  <Pickup>Allow</Pickup>
+  <IsBrandNew>true</IsBrandNew>
+  <PhotoIds>
+    <PhotoId>12345678</PhotoId>
+  </PhotoIds>
+  <ShippingOptions>
+    <ShippingOption>
+      <Type>Free</Type>
+    </ShippingOption>
+  </ShippingOptions>
+  <PaymentMethods>
+    <PaymentMethod>CreditCard</PaymentMethod>
+    <PaymentMethod>Cash</PaymentMethod>
+  </PaymentMethods>
+</ListingRequest>
 XML;
 
 $xml = str_replace(
@@ -67,79 +60,9 @@ $xml = str_replace(
 
 $book = new SimpleXMLElement($xml);
 
-// modify XML values as required
-
-$book->AbebookList->Abebook->vendorBookID = $post_id;
-
-$title = get_the_title($post_id);
-$title = str_replace("&#8217;","'", $title);
-$book->AbebookList->Abebook->title = $title;
-
-$book->AbebookList->Abebook->author = $post_meta['Author'][0];
-$book->AbebookList->Abebook->publisher = $post_meta['Publisher'][0];
-$book->AbebookList->Abebook->subject = $post_meta['Subject'][0];
-$book->AbebookList->Abebook->price = $post_meta['Price'][0];
-$book->AbebookList->Abebook->dustJacket = $post_meta['Dust jacket condition'][0];
-
-// update binding attribute and values
-
-if ( $post_meta['Binding'][0] == 'Hardback' || $post_meta['Binding'][0] == 'Hardcover') {
-  $book->AbebookList->Abebook->binding = 'Hardback';
-} else if ( $post_meta['Binding'][0] == 'Paperback' || $post_meta['Binding'][0] == 'Softcover' ) {
-  $book->AbebookList->Abebook->binding = 'Paperback';
-  $book->AbebookList->Abebook->binding['type'] = 'soft';
-} else {
-  echo 'NO BINDING DEFINED FOR THIS BOOK!';
-  throw new Exception('NO BINDING DEFINED!');
-}
-
-// flag first editions
-if ($post_meta['Edition'][0] == 'First') {
-  $book->AbebookList->Abebook->firstEdition = 'true';
-} else {
-  $book->AbebookList->Abebook->firstEdition = 'false';
-}
-
-$book->AbebookList->Abebook->signed = $post_meta['Signed'][0];
-$book->AbebookList->Abebook->booksellerCatalogue = $post_meta['Subject'][0];
-
-// compile a pretty description, including meta already known + actual post description
-
-$content_post = get_post($post_id);
-$content = $content_post->post_content;
-$content = apply_filters('the_content', $content);
-$content = str_replace(']]>', ']]&gt;', $content);
-$content = str_replace('&', 'and', $content);
-$content = strip_tags ($content);
-$content = str_replace("&#8216;","'", $content);
-$content = str_replace("&#8217;","'", $content);
-$content = str_replace("&#8220;",'"', $content);
-$content = str_replace("&#8221;",'"', $content);
-$content = str_replace("#038;",'', $content);
-$content = str_replace(":",' ', $content);
-//$content = str_replace("+",' ', $content);
-//$content = str_replace("-",' ', $content);
-
-$book->AbebookList->Abebook->description = $content;
-
-$book->AbebookList->Abebook->bookCondition = $post_meta['Condition'][0];
-$book->AbebookList->Abebook->publishPlace = $post_meta['Published location'][0];
-$book->AbebookList->Abebook->publishYear = $post_meta['Year'][0];
-$book->AbebookList->Abebook->isbn = $post_meta['ISBN'][0];
-$book->AbebookList->Abebook->size = $post_meta['Size'][0];
-$book->AbebookList->Abebook->jacketCondition = $post_meta['Dust jacket condition'][0];
-$book->AbebookList->Abebook->inscription = $post_meta['Inscription'][0];
-
-
-
-// QTY always hardcoded to 1 currently
-
-$book->AbebookList->Abebook->quantity = 1;
-
-
 $book_to_export = $book->asXML();
-$book_to_export = html_entity_decode($book_to_export);
-$book_to_export = str_replace('null', '', $book_to_export);
+//$book_to_export = html_entity_decode($book_to_export);
+//$book_to_export = str_replace('null', '', $book_to_export);
 
 ?>
 
@@ -158,25 +81,6 @@ if (count($warnings) > 0){
 function exportBookToTradeMe() {
   document.getElementById("results").innerHTML = 'request sent, awaiting response...';
 
-  var r = new XMLHttpRequest(); 
-
-  //r.open("POST", "TRADEMEENDPOINT", true); 
-
-  r.onreadystatechange = function () { 
-    if (r.readyState != 4 || r.status != 200) return; 
-    if (r.responseText.indexOf('<code>600</code>') > -1) {
-      document.getElementById("results").style.backgroundColor = '#99ff66';
-    } else {
-      document.getElementById("results").style.backgroundColor = 'orange';
-    }
-
-    document.getElementById("results").innerHTML = r.responseText;
-  } 
-
-  xml_content = document.getElementById("bookxml").value;
-
-  r.send(xml_content);
-}
 
 </script>
 
