@@ -46,6 +46,7 @@ $xml  = <<<XML
      <bookCondition>CONDITIONCONDITIONCONDITIONCONDITIONCONDITION</bookCondition>
      <publishPlace>PUBLISHPLACEPUBLISHPLACEPUBLISHPLACEPUBLISHPLACEPUBLISHPLACE</publishPlace>
      <publishYear>YEARYEARYEARYEARYEAR</publishYear>
+     <bookType>BOOKTYPEBOOKTYPEBOOKTYPE</bookType>
      <quantity amount="1">1</quantity>
      <isbn>000000000000000000</isbn>
      <size>999999999999999999999</size>
@@ -124,7 +125,12 @@ $book->AbebookList->Abebook->isbn = $post_meta['ISBN'][0];
 $book->AbebookList->Abebook->size = $post_meta['Size'][0];
 $book->AbebookList->Abebook->jacketCondition = $post_meta['Dust jacket condition'][0];
 $book->AbebookList->Abebook->inscription = $post_meta['Inscription'][0];
-// TODO: Book Type (ie, ex library): http://www.abebooks.com/docs/seller-help/inventory-update-api-user-guide.pdf
+
+if ($post_meta['Book type'][0] == 'Ex-Library') {
+  $book->AbebookList->Abebook->bookType = 'Ex-Library';
+} else {
+  $book->AbebookList->Abebook->bookType = '';
+}
 
 // QTY always hardcoded to 1 currently
 $book->AbebookList->Abebook->quantity = 1;
@@ -159,7 +165,9 @@ foreach ($images as $image) {
   if ($send_images == True){
     $local_image_url = str_replace('http://localhost:8888', '', $image_url);
 
-    $sftp->put($remote_file, '/Users/leon/visitmost.github.io/mostwp' . $local_image_url, NET_SFTP_LOCAL_FILE);
+    if ($x < 6){
+      $sftp->put($remote_file, '/Users/leon/visitmost.github.io/mostwp' . $local_image_url, NET_SFTP_LOCAL_FILE);
+    }
   }
 
   $x += 1;
