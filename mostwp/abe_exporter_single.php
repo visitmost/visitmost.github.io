@@ -118,6 +118,13 @@ $content = str_replace("#038;",'', $content);
 $content = str_replace("#8211;",'', $content);
 $content = str_replace(":",' ', $content);
 $content = rtrim($content);
+
+$slug = $content_post->post_name;
+
+$content = $content . '
+
+More images of this book may be available at http://visitmost.github.io/' . $slug;
+
 $book->AbebookList->Abebook->description = $content;
 $book->AbebookList->Abebook->bookCondition = $post_meta['Condition'][0];
 $book->AbebookList->Abebook->publishPlace = $post_meta['Published location'][0];
@@ -173,6 +180,12 @@ foreach ($images as $image) {
 
   $x += 1;
 }
+
+if ( ! add_post_meta( $post_id, 'Abe Images Updated', date('Y-m-d H:i:s'), true ) ) { 
+   update_post_meta( $post_id, 'Abe Images Updated', date('Y-m-d H:i:s') );
+}
+
+
 ?>
 
 <html>
