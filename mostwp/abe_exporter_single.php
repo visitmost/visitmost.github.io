@@ -115,6 +115,7 @@ $content = str_replace("&#8221;",'"', $content);
 $content = str_replace("#8220;",'"', $content);
 $content = str_replace("#8221;",'"', $content);
 $content = str_replace("#038;",'', $content);
+$content = str_replace("#8211;",'', $content);
 $content = str_replace(":",' ', $content);
 $content = rtrim($content);
 $book->AbebookList->Abebook->description = $content;
@@ -215,7 +216,7 @@ function transferImagesViaFTP() {
 </script>
 
 <textarea style="width: 985px;height: 449px;" id="bookxml">
-<?=$book_to_export;?>
+<?=str_replace("and's", "'s", $book_to_export);?>
 </textarea>
 
 <br />
