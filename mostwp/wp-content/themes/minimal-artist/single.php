@@ -10,6 +10,22 @@ get_header(); ?>
 		<?php get_template_part( 'content', get_post_format() ); ?>
 		</article>
 
+<?php
+// if there are no images in post, include full size of the featured image
+$content_post = get_post($post_id);
+$content = $content_post->post_content;
+$dom = new domDocument;
+$dom->loadHTML($content);
+$dom->preserveWhiteSpace = false;
+$images = $dom->getElementsByTagName('img');
+
+// if images are empty, then only featured exists, use that instead
+if ($images->length == 0) {
+  echo get_the_post_thumbnail( $post_id, 'full' );
+}
+
+?>
+
 		<div class="post-tags" aria-label="<?php _e( 'Post tags', 'minart' ); ?>">
 			<?php the_tags( '', '', ''); ?>
 		</div>
