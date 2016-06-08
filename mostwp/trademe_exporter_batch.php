@@ -81,6 +81,8 @@ $blank_row[31] = 1; //allow cash
 // query posts (everything with a price set)
 $events_query = new WP_Query( 
   array(
+    'order' => 'DESC',
+    'category_name' => 'book-catalog',
     'post_type' => 'post',
     'posts_per_page' => -1,
     'meta_query' => array( 
@@ -125,7 +127,6 @@ while ( $events_query->have_posts() ) :
  
     $book_row[8] = $title; // append author, year to this
 
-    $book->subject = $post_meta['Subject'][0];
 
     // start price
     $book_row[14] = $post_meta['Price'][0];
@@ -136,34 +137,39 @@ while ( $events_query->have_posts() ) :
     // fixed price offer
     $book_row[19] = $post_meta['Price'][0] - 1;
 
-    
-
-    $book->dustJacket = $post_meta['Dust jacket condition'][0];
-
-    // update binding attribute and values
-    if ( $post_meta['Binding'][0] == 'Hardback' || $post_meta['Binding'][0] == 'Hardcover') {
-      $book->binding = 'Hardback';
-    } else if ( $post_meta['Binding'][0] == 'Paperback' || $post_meta['Binding'][0] == 'Softcover' ) {
-      $book->binding = 'Paperback';
-      $book->binding['type'] = 'soft';
-    } else {
-      echo 'NO BINDING DEFINED FOR THIS BOOK!';
-      throw new Exception('NO BINDING DEFINED!');
-    }
-
-    // flag first editions
-    if ($post_meta['Edition'][0] == 'First') {
-      $book->firstEdition = 'true';
-    } else {
-      $book->firstEdition = 'false';
-    }
-
-    $book->signed = $post_meta['Signed'][0];
-    $book->booksellerCatalogue = $post_meta['Subject'][0];
-
     // compile a pretty description, including meta already known + actual post description
     $content_post = get_post($post_id);
     $content = $content_post->post_content;
+
+    $book_images = [];
+
+    $dom = new domDocument;
+    //$dom->loadHTML(htmlentities($content));
+    $dom->loadHTML($content);
+    $dom->preserveWhiteSpace = false;
+    $images = $dom->getElementsByTagName('img');
+
+    // if images are empty, then only featured exists, use that instead
+    if ($images->length == 0) {
+      $image_dom = new domDocument;
+      $image_dom->loadHTML(get_the_post_thumbnail( $post_id, 'full' ));
+      $images = $image_dom->getElementsByTagName('img');
+        foreach ($images as $image) {
+          $image_url = $image->getAttribute('src');
+
+          $book_images[] = str_replace('http://localhost:8888', 'http://visitmost.github.io', $image_url);
+      }
+    } else {
+      // TODO: limit images to 20
+      foreach ($images as $image) {
+        $image_url = $image->getAttribute('src');
+
+        $book_images[] = str_replace('http://localhost:8888', 'http://visitmost.github.io', $image_url);
+      }
+    }
+
+    $book_row[2] = join(';', $book_images);
+
     $content = apply_filters('the_content', $content);
     $content = str_replace(']]>', ']]&gt;', $content);
     $content = str_replace('&', 'and', $content);
@@ -191,140 +197,51 @@ while ( $events_query->have_posts() ) :
     $book_row[10] = str_replace(',', ' ', $content);
 
 
-    $book->bookCondition = $post_meta['Condition'][0];
-    $book->isbn = $post_meta['ISBN'][0];
-    $book->size = $post_meta['Size'][0];
-    $book->jacketCondition = $post_meta['Dust jacket condition'][0];
-    $book->inscription = $post_meta['Inscription'][0];
+    //$book->dustJacket = $post_meta['Dust jacket condition'][0];
+    //$book->subject = $post_meta['Subject'][0];
 
-    if ($post_meta['Book type'][0] == 'Ex-Library') {
-      $book->bookType = 'Ex-Library';
-    } else {
-      $book->bookType = '';
-    }
+    //// update binding attribute and values
+    //if ( $post_meta['Binding'][0] == 'Hardback' || $post_meta['Binding'][0] == 'Hardcover') {
+    //  $book->binding = 'Hardback';
+    //} else if ( $post_meta['Binding'][0] == 'Paperback' || $post_meta['Binding'][0] == 'Softcover' ) {
+    //  $book->binding = 'Paperback';
+    //  $book->binding['type'] = 'soft';
+    //} else {
+    //  echo 'NO BINDING DEFINED FOR THIS BOOK!';
+    //  throw new Exception('NO BINDING DEFINED!');
+    //}
 
-    // QTY always hardcoded to 1 currently
-    $book->quantity = 1;
+    //// flag first editions
+    //if ($post_meta['Edition'][0] == 'First') {
+    //  $book->firstEdition = 'true';
+    //} else {
+    //  $book->firstEdition = 'false';
+    //}
+
+    //$book->signed = $post_meta['Signed'][0];
+    //$book->booksellerCatalogue = $post_meta['Subject'][0];
+    //$book->bookCondition = $post_meta['Condition'][0];
+    //$book->isbn = $post_meta['ISBN'][0];
+    //$book->size = $post_meta['Size'][0];
+    //$book->jacketCondition = $post_meta['Dust jacket condition'][0];
+    //$book->inscription = $post_meta['Inscription'][0];
+    //// QTY always hardcoded to 1 currently
+    //$book->quantity = 1;
+
+    //if ($post_meta['Book type'][0] == 'Ex-Library') {
+    //  $book->bookType = 'Ex-Library';
+    //} else {
+    //  $book->bookType = '';
+    //}
+
+
 
     echo '<br />';
     echo join(',', $book_row);
 endwhile;
 
 
-$xml  .= <<<XML
- </AbebookList>
-</inventoryUpdateRequest>
-XML;
-
-$compiled_book = new SimpleXMLElement($xml);
-
-
-$book_to_export = $compiled_book->asXML();
-$book_to_export = html_entity_decode($book_to_export);
-$book_to_export = str_replace('null', '', $book_to_export);
-
-$book_images = [];
-
-$dom = new domDocument;
-$dom->loadHTML($content_post->post_content);
-$dom->preserveWhiteSpace = false;
-$images = $dom->getElementsByTagName('img');
-
-if ($send_images == True){
-  include('Net/SFTP.php');
-
-  $sftp = new Net_SFTP('ftp.abebooks.com');
-  if (!$sftp->login(getenv('ABE_FTP_USERNAME'), getenv('ABE_FTP_PASSWORD'))) {
-      exit('Login Failed');
-  }
-}
-
-$x = 1;
-foreach ($images as $image) {
-  $image_url = $image->getAttribute('src');
-  $book_images[] = $image_url;
-
-  $remote_file = $post_id . '_' . $x . '.jpg';
-
-  if ($send_images == True){
-    $local_image_url = str_replace('http://localhost:8888', '', $image_url);
-
-    if ($x < 6){
-      $sftp->put($remote_file, '/Users/leon/visitmost.github.io/mostwp' . $local_image_url, NET_SFTP_LOCAL_FILE);
-    }
-  }
-
-  $x += 1;
-}
-
-if ( ! add_post_meta( $post_id, 'Abe Images Updated', date('Y-m-d H:i:s'), true ) ) { 
-   update_post_meta( $post_id, 'Abe Images Updated', date('Y-m-d H:i:s') );
-}
 
 
 ?>
-
-<html>
-<head>
-		<meta charset="ISO-8859-1" />
-</head>
-
-<?
-if (count($warnings) > 0){
-  print_r($warnings);
-}
-?>
-
-<script>
-function exportBookToAbeBooks() {
-  document.getElementById("results").innerHTML = 'request sent, awaiting response...';
-
-  var r = new XMLHttpRequest(); 
-
-  r.open("POST", "https://inventoryupdate.abebooks.com:10027", true); 
-
-  r.onreadystatechange = function () { 
-    if (r.readyState != 4 || r.status != 200) return; 
-    if (r.responseText.indexOf('<code>600</code>') > -1) {
-      document.getElementById("results").style.backgroundColor = '#99ff66';
-    } else {
-      document.getElementById("results").style.backgroundColor = 'orange';
-    }
-
-    document.getElementById("results").innerHTML = r.responseText;
-  } 
-
-  xml_content = document.getElementById("bookxml").value;
-
-  r.send(xml_content);
-}
-
-function transferImagesViaFTP() {
-  window.location = window.location.href + '&transfer_files=TRUE';
-}
-</script>
-
-<textarea style="width: 985px;height: 449px;" id="bookxml">
-<?=str_replace("and's", "'s", $book_to_export);?>
-</textarea>
-
-<br />
-<button onclick=exportBookToAbeBooks();>Export <?=$events_query->post_count;?> books to AbeBooks.com</button>
-
-<button onclick=transferImagesViaFTP();>Transfer images via sFTP</button>
-<br />
-
-<textarea id="results" style="width: 985px;height: 200px;">
-...results will appear here...
-</textarea>
-
-<br />
-
-<? foreach($book_images as $book_image): ?>
-
-<img src="<?=$book_image;?>" style="height:200px;"/>
-
-<? endforeach; ?>
-
-</html>
 
