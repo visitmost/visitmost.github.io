@@ -3,64 +3,26 @@
 // get WP system loaded
 require_once(dirname(__FILE__) . '/wp-load.php');
 
-// custom format to AbeBooks style
-$xml  = <<<XML
-<?xml version="1.0" encoding="ISO-8859-1"?>
+// head of AbeBooks XML schema 
+$xml  = '<?xml version="1.0" encoding="ISO-8859-1"?>
 <inventoryUpdateRequest version="1.0">
   <action name="bookupdate">
    <username>BOOKSELLER_USERNAME</username>
   <password>BOOKSELLER_PASSWORD</password>
  </action>
  <AbebookList>
+'; // space left at end to keep alignment
 
-XML;
-
+// replace sensitive information from env vars
 $xml = str_replace(
   array('BOOKSELLER_USERNAME', 'BOOKSELLER_PASSWORD'), 
   array(getenv('BOOKSELLER_USERNAME'), getenv('BOOKSELLER_PASSWORD')), 
   $xml
 );
 
-
-$send_images = False;
-
-if(isset($_GET['transfer_files'])){
-  $send_images = True;
-}
-
-// query posts (everything with a price set)
-
-$events_query = new WP_Query( 
-  array(
-    'post_type' => 'post',
-    'posts_per_page' => -1,
-    'meta_query' => array( 
-      array( 
-        'key' => 'Price' 
-      ) 
-    )
-  ) 
-);
-
-
-while ( $events_query->have_posts() ) :
-    $events_query->the_post();
-
-//    echo get_the_title() . '<br/>';
-
-    $post_id = get_the_ID();
-
-    // get all the post meta
-    $post_meta = get_post_meta($post_id);
-
-    $warnings = [];
-
-    if ($post_meta['Price'][0] == '') {
-      $warnings['Price'] = 'not set';
-    }
-
-
-$book = <<<XML
+// template chunk to be replaced by book contents
+// indented to keep xml alignment
+$book_template = '
   <Abebook>
     <transactionType>add</transactionType>
     <vendorBookID>999999</vendorBookID>
@@ -85,11 +47,36 @@ $book = <<<XML
     <jacketCondition>JACKETCONDITIONJACKETCONDITIONJACKETCONDITIONJACKETCONDITION</jacketCondition>
     <inscription>INSCRIPTIONINSCRIPTIONINSCRIPTIONINSCRIPTIONINSCRIPTION</inscription>
   </Abebook>
-XML;
+';
 
+// get all published posts which have a price set
+// TODO: filter out sold items
+$exportable_posts_query = new WP_Query( 
+  array(
+    'post_type' => 'post',
+    'posts_per_page' => -1,
+    'meta_query' => array( 
+      array( 
+        'key' => 'Price' 
+      ) 
+    )
+  ) 
+);
 
-    // make XML object out of sample XML
-    $book = new SimpleXMLElement($book);
+// loop through exportable posts
+while ( $exportable_posts_query->have_posts() ) :
+    $exportable_posts_query->the_post();
+
+    $post_id = get_the_ID();
+
+    // get all the post meta (author, price, etc)
+    $post_meta = get_post_meta($post_id);
+
+    // new xml object based on template
+    $book = new SimpleXMLElement($book_template);
+
+    // TODO: check htmlentities() or using text outside textarea for better
+    //       dealing with encoding issues
 
     // modify XML values as required
     $book->vendorBookID = $post_id;
@@ -97,6 +84,7 @@ XML;
     $title = get_the_title($post_id);
     $title = str_replace("&#8217;","'", $title);
     $book->title = $title;
+
     $book->author = $post_meta['Author'][0];
     $book->publisher = $post_meta['Publisher'][0];
     $book->subject = $post_meta['Subject'][0];
@@ -115,12 +103,11 @@ XML;
     }
 
     // flag first editions
+    $book->firstEdition = 'false';
     if ($post_meta['Edition'][0] == 'First') {
       $book->firstEdition = 'true';
-    } else {
-      $book->firstEdition = 'false';
     }
-
+ 
     $book->signed = $post_meta['Signed'][0];
     $book->booksellerCatalogue = $post_meta['Subject'][0];
 
@@ -142,11 +129,13 @@ XML;
     $content = str_replace("#038;",'', $content);
     $content = str_replace("#8211;",'', $content);
     $content = str_replace(":",' ', $content);
+
+    // remove trailing whitespace, including newlines
     $content = rtrim($content);
 
-    //$slug = $content_post->post_name;
+    $slug = $content_post->post_name;
 
-    $content = $content . ' More images of this book may be available on our website.';
+    $content = $content . ' More images of this book may be available at: http://visitmost.github.io/' . $slug;
 
     $book->description = $content;
     $book->bookCondition = $post_meta['Condition'][0];
@@ -163,80 +152,34 @@ XML;
       $book->bookType = '';
     }
 
-    // QTY always hardcoded to 1 currently
+    // each book is unique, so no combined listings for same copy
     $book->quantity = 1;
 
-    //echo $book->asXML();
-
+    // convert book node back to string representation of XML
     $single_book = $book->asXML();
 
+    // remove XML header from individual book nodes and add to tree's string
     $xml .= '  ' . str_replace("<?xml version=\"1.0\"?>\n",'', $single_book);
 endwhile;
 
-
-$xml  .= <<<XML
- </AbebookList>
+// trailing XML footer
+$xml  .= ' </AbebookList>
 </inventoryUpdateRequest>
-XML;
+';
 
+// convert compiled string back to XML 
 $compiled_book = new SimpleXMLElement($xml);
 
-
+// once more (needed?) XML back to string
 $book_to_export = $compiled_book->asXML();
 $book_to_export = html_entity_decode($book_to_export);
 $book_to_export = str_replace('null', '', $book_to_export);
-
-$book_images = [];
-
-$dom = new domDocument;
-$dom->loadHTML($content_post->post_content);
-$dom->preserveWhiteSpace = false;
-$images = $dom->getElementsByTagName('img');
-
-if ($send_images == True){
-  include('Net/SFTP.php');
-
-  $sftp = new Net_SFTP('ftp.abebooks.com');
-  if (!$sftp->login(getenv('ABE_FTP_USERNAME'), getenv('ABE_FTP_PASSWORD'))) {
-      exit('Login Failed');
-  }
-}
-
-$x = 1;
-foreach ($images as $image) {
-  $image_url = $image->getAttribute('src');
-  $book_images[] = $image_url;
-
-  $remote_file = $post_id . '_' . $x . '.jpg';
-
-  if ($send_images == True){
-    $local_image_url = str_replace('http://localhost:8888', '', $image_url);
-
-    if ($x < 6){
-      $sftp->put($remote_file, '/Users/leon/visitmost.github.io/mostwp' . $local_image_url, NET_SFTP_LOCAL_FILE);
-    }
-  }
-
-  $x += 1;
-}
-
-if ( ! add_post_meta( $post_id, 'Abe Images Updated', date('Y-m-d H:i:s'), true ) ) { 
-   update_post_meta( $post_id, 'Abe Images Updated', date('Y-m-d H:i:s') );
-}
-
-
 ?>
 
 <html>
 <head>
 		<meta charset="ISO-8859-1" />
 </head>
-
-<?
-if (count($warnings) > 0){
-  print_r($warnings);
-}
-?>
 
 <script>
 function exportBookToAbeBooks() {
@@ -261,10 +204,6 @@ function exportBookToAbeBooks() {
 
   r.send(xml_content);
 }
-
-function transferImagesViaFTP() {
-  window.location = window.location.href + '&transfer_files=TRUE';
-}
 </script>
 
 <textarea style="width: 985px;height: 449px;" id="bookxml">
@@ -272,9 +211,9 @@ function transferImagesViaFTP() {
 </textarea>
 
 <br />
-<button onclick=exportBookToAbeBooks();>Export <?=$events_query->post_count;?> books to AbeBooks.com</button>
 
-<button onclick=transferImagesViaFTP();>Transfer images via sFTP</button>
+<button onclick=exportBookToAbeBooks();>Export <?=$exportable_posts_query->post_count;?> books to AbeBooks.com</button>
+
 <br />
 
 <textarea id="results" style="width: 985px;height: 200px;">
@@ -282,12 +221,5 @@ function transferImagesViaFTP() {
 </textarea>
 
 <br />
-
-<? foreach($book_images as $book_image): ?>
-
-<img src="<?=$book_image;?>" style="height:200px;"/>
-
-<? endforeach; ?>
-
 </html>
 
