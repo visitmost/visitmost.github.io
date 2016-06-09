@@ -135,7 +135,8 @@ while ( $exportable_posts_query->have_posts() ) :
 
     $slug = $content_post->post_name;
 
-    $content = $content . ' More images of this book may be available at: http://visitmost.github.io/' . $slug;
+    //$content = $content . ' More images of this book may be available at: http://visitmost.github.io/' . $slug;
+    $content = $content . ' More images of this book may be available on our homepage';
 
     $book->description = $content;
     $book->bookCondition = $post_meta['Condition'][0];
