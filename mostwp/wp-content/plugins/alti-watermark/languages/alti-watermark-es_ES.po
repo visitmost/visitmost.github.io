@@ -1,0 +1,194 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: alti Watermark 0.3\n"
+"POT-Creation-Date: 2015-03-22 19:49-0500\n"
+"PO-Revision-Date: 2015-03-22 19:49-0500\n"
+"Last-Translator: alticreation <alexis@alticreation.com>\n"
+"Language-Team: \n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.11\n"
+"X-Poedit-Basepath: ../\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: admin/class-alti-watermark-admin.php:58
+msgid ""
+"The Watermark plugin cannot work without the Rewrite Apache Module (<a href="
+"\"http://httpd.apache.org/docs/current/en/mod/mod_rewrite.html\" target="
+"\"_blank\">mod_rewrite</a>). Yourself or your web host has to activate this "
+"module."
+msgstr ""
+"El plugin Watermark no puede funcionar sin el Modulo Apache de Rewrite (<a "
+"href=\"http://httpd.apache.org/docs/current/en/mod/mod_rewrite.html\" target="
+"\"_blank\">mod_rewrite</a>). Usted o su alojamiento web debe activar este "
+"modulo."
+
+#: admin/class-alti-watermark-admin.php:74
+msgid "A previous htaccess file exists already, it has to be renamed."
+msgstr "Un archivo htaccess anterior ya existe, tiene que ser renombrado."
+
+#: admin/class-alti-watermark-admin.php:80
+msgid "The previous htaccess file has been renamed successfully to "
+msgstr "El archivo htaccess anterior ha sido renombrado a"
+
+#: admin/class-alti-watermark-admin.php:85
+msgid "The previous htaccess file couldn't be renamed."
+msgstr "El archivo htaccess anterior no pudo ser renombrado."
+
+#: admin/class-alti-watermark-admin.php:107
+#: admin/class-alti-watermark-admin.php:120
+msgid ""
+"Impossible to create the folder needed to store the watermark image. The "
+"directory : "
+msgstr ""
+"Es imposible crear la carpeta necesaria para almacenar la imagen de marca de "
+"agua. El directorio: "
+
+#: admin/class-alti-watermark-admin.php:107
+#: admin/class-alti-watermark-admin.php:120
+msgid ""
+" has to be writable. <br> Please change <a href=\"http://codex.wordpress.org/"
+"Changing_File_Permissions\" target=\"_blank\">file permissions</a> in order "
+"to let the plugin works."
+msgstr ""
+"tiene que tener permisos de escritura. <br> Por favor, cambie los <a href="
+"\"http://codex.wordpress.org/Changing_File_Permissions\" target=\"_blank\"> "
+"permisos de archivo </a> para hacer funcionar el plugin."
+
+#: admin/class-alti-watermark-admin.php:139
+msgid "Image formats have been updated."
+msgstr "Los formatos de imagen han sido actualizados."
+
+#: admin/class-alti-watermark-admin.php:146
+msgid ""
+"You have to choose at least one image format. The fullsize has been set per "
+"default."
+msgstr ""
+"Tiene que elegir al menos un formato de imagen. El tamaño completo "
+"(fullsize) se ha establecido por defecto."
+
+#: admin/class-alti-watermark-admin.php:157
+#: admin/class-alti-watermark-admin.php:166
+msgid "Impossible to upload and/or generate the watermark image."
+msgstr "Es imposible subir y / o generan la imagen de agua."
+
+#: admin/class-alti-watermark-admin.php:174
+msgid "Watermark cannot be uploaded because it is not a valid image file."
+msgstr ""
+"La marca de agua no se puede cargar porque no es un archivo de imagen válido."
+
+#: admin/class-alti-watermark-admin.php:184
+msgid "Watermark image has been uploaded successfully !"
+msgstr "La imagen de marca de agua se ha subido correctamente!"
+
+#: admin/class-alti-watermark-admin.php:312
+msgid "Impossible to get the image formats setting."
+msgstr "Es imposible de conseguir el ajuste formatos de imagen."
+
+#: admin/class-alti-watermark-admin.php:341
+msgid ""
+"Your uploads directory seems to be customized. It uses path that is not "
+"supported or not valid. The plugin will not work properly."
+msgstr ""
+"Su directorio de archivos parece ser personalizado. Utiliza camino que no es "
+"compatible o no válido. El plugin puede no funcionar correctamente."
+
+#: admin/class-alti-watermark-admin.php:401
+msgid ""
+"The PHP GD Library to manipulate images has not been found on your server."
+msgstr ""
+"La biblioteca PHP GD para manipular las imágenes no se ha encontrado en su "
+"servidor web."
+
+#: admin/class-alti-watermark-admin.php:475
+msgid "Settings"
+msgstr "Ajustes"
+
+#: admin/views/alti-watermark-admin-settings-page.php:16
+msgid "by"
+msgstr "por"
+
+#: admin/views/alti-watermark-admin-settings-page.php:17
+msgid ""
+"Apply a watermark on all your photographies. This action is cancelable just "
+"by deactivating the plugin. <br>The watermark will be applied even in your "
+"photos already uploaded."
+msgstr ""
+"Se aplica una marca de agua en todas sus fotografías. Esta acción se puede "
+"cancelar desactivando el plugin. <br> La marca de agua se aplicará incluso "
+"en sus fotos ya cargado."
+
+#: admin/views/alti-watermark-admin-settings-page.php:24
+#: admin/views/alti-watermark-admin-settings-page.php:29
+msgid "Images format"
+msgstr "Formato de las imágenes"
+
+#: admin/views/alti-watermark-admin-settings-page.php:34
+msgid "fullsize"
+msgstr "tamaño completo"
+
+#: admin/views/alti-watermark-admin-settings-page.php:34
+msgid "original image not resized by Wordpress"
+msgstr "imagen original que no ha sido recortada por Wordpress"
+
+#: admin/views/alti-watermark-admin-settings-page.php:42
+msgid "Choose a watermark"
+msgstr "Eligir una marca de agua"
+
+#: admin/views/alti-watermark-admin-settings-page.php:46
+msgid "For transparent background watermark, use a PNG image."
+msgstr ""
+"Para obtener un fondo transparente para la marca de agua, utilice una imagen "
+"PNG."
+
+#: admin/views/alti-watermark-admin-settings-page.php:51
+msgid "Preview"
+msgstr "Vista previa"
+
+#: admin/views/alti-watermark-admin-settings-page.php:57
+msgid "Real size"
+msgstr "Tamaño real"
+
+#: admin/views/alti-watermark-admin-settings-page.php:62
+msgid "Support"
+msgstr "Ayuda"
+
+#: admin/views/alti-watermark-admin-settings-page.php:65
+msgid ""
+"alti Watermark Plugin <a href=\"http://www.alticreation.com/en/alti-"
+"watermark/\" target=\"_blank\">support page</a>."
+msgstr ""
+"<a href=\"http://www.alticreation.com/en/alti-watermark/\" target=\"_blank"
+"\">página de ayuda</a> del plugin alti Watermark."
+
+#: admin/views/alti-watermark-admin-settings-page.php:72
+msgid "Update"
+msgstr "Actualizar"
+
+#: admin/views/alti-watermark-admin-settings-page.php:80
+msgid "alti Watermark plugin is developped by"
+msgstr "Este plugin es desarrollado por"
+
+#: admin/views/includes/alti-watermark-admin-image-size-label.php:10
+msgid "cropped"
+msgstr "recortado"
+
+#: admin/views/includes/alti-watermark-admin-image-size-label.php:15
+msgid "select also fullsize to ensure this format works"
+msgstr ""
+"Elige tambien el tamaño completo para que este formato funcione correctamente"
+
+#: admin/views/includes/alti-watermark-admin-message.php:7
+msgid "Error code"
+msgstr "Código de erro"
+
+#: admin/views/includes/alti-watermark-admin-message.php:7
+msgid "Go to alti Watermark documentation"
+msgstr "Ir a la documentacion de alti Watermark"
+
+#~ msgid "Submit"
+#~ msgstr "Envío"

@@ -4,46 +4,46 @@
 require_once(dirname(__FILE__) . '/wp-load.php');
 
 // custom format to AbeBooks style
-$csv_header[] = '*Action(SiteID=US|Country=US|Currency=USD|Version=941)';
-$csv_header[] = '*Category';
-$csv_header[] = '*Title';
-$csv_header[] = 'Subtitle';
-$csv_header[] = '*Description';
-$csv_header[] = '*ConditionID';
-$csv_header[] = 'PicURL';
-$csv_header[] = '*Quantity';
-$csv_header[] = '*Format';
-$csv_header[] = '*StartPrice';
-$csv_header[] = 'BuyItNowPrice';
-$csv_header[] = '*Duration';
-$csv_header[] = 'ImmediatePayRequired';
-$csv_header[] = '*Location';
-$csv_header[] = 'GalleryType';
-$csv_header[] = 'PayPalAccepted';
-$csv_header[] = 'PayPalEmailAddress';
-$csv_header[] = 'PaymentInstructions';
-$csv_header[] = 'StoreCategory';
-$csv_header[] = 'ShippingDiscountProfileID';
-$csv_header[] = 'DomesticRateTable';
-$csv_header[] = 'ShippingType';
-$csv_header[] = 'ShippingService-1:Option';
-$csv_header[] = 'ShippingService-1:Cost';
-$csv_header[] = 'ShippingService-1:Priority';
-$csv_header[] = 'ShippingService-1:ShippingSurcharge';
-$csv_header[] = 'ShippingService-2:Option';
-$csv_header[] = 'ShippingService-2:Cost';
-$csv_header[] = 'ShippingService-2:Priority';
-$csv_header[] = 'ShippingService-2:ShippingSurcharge';
-$csv_header[] = 'DispatchTimeMax';
-$csv_header[] = 'CustomLabel';
-$csv_header[] = 'ReturnsAcceptedOption';
-$csv_header[] = 'RefundOption';
-$csv_header[] = 'ReturnsWithinOption';
-$csv_header[] = 'ShippingCostPaidByOption';
-$csv_header[] = 'AdditionalDetails';
-$csv_header[] = 'ShippingProfileName';
-$csv_header[] = 'ReturnProfileName';
-$csv_header[] = 'PaymentProfileName';
+$csv_header[] = '*Action(SiteID=US|Country=US|Currency=USD|Version=941)';//0
+$csv_header[] = '*Category';//1
+$csv_header[] = '*Title';//2
+$csv_header[] = '*Description';//3
+$csv_header[] = 'PicURL';//4
+$csv_header[] = '*Quantity';//5
+$csv_header[] = '*Format';//6
+$csv_header[] = '*StartPrice';//7
+$csv_header[] = '*Duration';//8
+$csv_header[] = 'ImmediatePayRequired';//9
+$csv_header[] = '*Location';//10
+$csv_header[] = 'PayPalAccepted';//11
+$csv_header[] = 'PayPalEmailAddress';//12
+$csv_header[] = 'ShippingType';//13
+$csv_header[] = 'ShippingService-1:Option';//14
+$csv_header[] = 'ShippingService-1:Cost';//15
+$csv_header[] = 'DispatchTimeMax';//16
+$csv_header[] = 'CustomLabel';//17
+$csv_header[] = 'ReturnsAcceptedOption';//18
+$csv_header[] = 'RefundOption';//19
+$csv_header[] = 'ReturnsWithinOption';//20
+$csv_header[] = 'ShippingCostPaidByOption';//21
+$csv_header[] = 'AdditionalDetails';//22
+$csv_header[] = 'ShippingProfileName';//23
+$csv_header[] = 'ReturnProfileName';//24
+$csv_header[] = 'PaymentProfileName';//25
+//$csv_header[] = 'BuyItNowPrice';
+//$csv_header[] = 'Subtitle';
+//$csv_header[] = '*ConditionID';
+//$csv_header[] = 'GalleryType';
+//$csv_header[] = 'PaymentInstructions';
+//$csv_header[] = 'StoreCategory';
+//$csv_header[] = 'ShippingDiscountProfileID';
+//$csv_header[] = 'DomesticRateTable';
+//$csv_header[] = 'ShippingService-1:Priority';
+//$csv_header[] = 'ShippingService-1:ShippingSurcharge';
+//$csv_header[] = 'ShippingService-2:Option';
+//$csv_header[] = 'ShippingService-2:Cost';
+//$csv_header[] = 'ShippingService-2:Priority';
+//$csv_header[] = 'ShippingService-2:ShippingSurcharge';
 
 $csv_header = join(',', $csv_header);
 
@@ -54,19 +54,20 @@ $blank_row = preg_replace("/[^,]+/", "", $csv_header);
 $blank_row = explode(',', $blank_row);
 
 // set defaults for TradeMe row
-$blank_row[3] = 1; //update_active_listing
-$blank_row[4] = 1; //stock amount
-$blank_row[5] = 0; //unlimited_stock
-$blank_row[11] = 0; //used item
-$blank_row[20] = 7; // fixed price duration
-$blank_row[21] = 'A'; // offer FPO to all watchers and bidders
-$blank_row[22] = 1;// auth bidders only
-$blank_row[23] = 7; // auction length
-$blank_row[25] = 1; // pickup allowed
-$blank_row[28] = '7.00=Untracked NZ wide;10.00=Tracked NZ wide'; // delivery options [ price = description ]
-$blank_row[29] = 1; //allow bank transfer
-$blank_row[30] = 1; //allow credit card
-$blank_row[31] = 1; //allow cash
+$blank_row[0] = 'VerifyAdd'; //VerifyAdd for test run, Add for realsies
+$blank_row[1] = 29223; //category - 29223 = Antiques and Manuscripts, easy bucket to start with
+$blank_row[5] = 1; // qty
+$blank_row[6] = 'FixedPrice'; // FixedPrice or Auction
+$blank_row[10] = 'New Zealand'; // location
+$blank_row[11] = 1; // PayPal accepted
+$blank_row[12] = 'leon@mostengineers.com'; // PayPal email
+$blank_row[13] = 'Flat'; // shipping type Flat or Calculated
+$blank_row[14] = 'Other'; // type of shipping - no NZ options
+//$blank_row[14] = 'New Zealand Post International Air (Untracked)'; // shipping type Flat or Calculated
+$blank_row[15] = 6.00; // cost of above shipping option
+$blank_row[16] = 2; // max dispatch time (business days)
+$blank_row[18] = 'ReturnsNotAccepted'; // ReturnsAccepted or ReturnsNotAccepted
+
 
 //TODO: allows length, width, height and weight (of shippable package) would be nice to include...
 
@@ -93,42 +94,18 @@ while ( $events_query->have_posts() ) :
 
     $post_id = get_the_ID();
 
-    $book_row[0] = $post_id;
-
     // get all the post meta
     $post_meta = get_post_meta($post_id);
 
-    $year = $post_meta['Year'][0];
-
-    //category: < 1950 is 1822, modern is 1823
-    if ($year < 1950) {
-      $book_row[6] = 1822; 
-    } else {
-      $book_row[6] = 1823; 
-    }
-
-    $warnings = [];
-
-    if ($post_meta['Price'][0] == '') {
-      $warnings['Price'] = 'not set';
-    }
-
     $title = str_replace(',', ' ', get_the_title($post_id));
- 
-    $title = substr($title,0,50);
- 
-    $book_row[8] = $title; // append author, year to this
+    $title = substr($title,0,80); //max 80 chars for eBay
+    $book_row[2] = $title; // TODO: append author, year to this if less than 80 chars...
 
-
-    // start price
-    $book_row[14] = $post_meta['Price'][0];
+    //$book_row[7] = $post_meta['ISBN'][0]; // ISBN
+    $book_row[7] = $post_meta['Price'][0];// start price
+    $book_row[8] = 10;// duration
+    $book_row[9] = 0;// immediate payment required (Premier and Business accounts only)
     
-    // buy now price
-    $book_row[16] = $post_meta['Price'][0];
-
-    // fixed price offer
-    $book_row[19] = $post_meta['Price'][0] - 1;
-
     // compile a pretty description, including meta already known + actual post description
     $content_post = get_post($post_id);
     $content = $content_post->post_content;
@@ -136,7 +113,6 @@ while ( $events_query->have_posts() ) :
     $book_images = [];
 
     $dom = new domDocument;
-    //$dom->loadHTML(htmlentities($content));
     $dom->loadHTML($content);
     $dom->preserveWhiteSpace = false;
     $images = $dom->getElementsByTagName('img');
@@ -160,7 +136,7 @@ while ( $events_query->have_posts() ) :
       }
     }
 
-    $book_row[2] = join(';', $book_images);
+    $book_row[4] = join('|', $book_images);
 
     $content = apply_filters('the_content', $content);
     $content = str_replace(']]>', ']]&gt;', $content);
@@ -186,54 +162,11 @@ while ( $events_query->have_posts() ) :
 
     $content = $content . '. More images of this book may be available at http://visitmost.github.io/' . $slug;
 
-    $book_row[10] = str_replace(',', ' ', $content);
-
-
-    //$book->dustJacket = $post_meta['Dust jacket condition'][0];
-    //$book->subject = $post_meta['Subject'][0];
-
-    //// update binding attribute and values
-    //if ( $post_meta['Binding'][0] == 'Hardback' || $post_meta['Binding'][0] == 'Hardcover') {
-    //  $book->binding = 'Hardback';
-    //} else if ( $post_meta['Binding'][0] == 'Paperback' || $post_meta['Binding'][0] == 'Softcover' ) {
-    //  $book->binding = 'Paperback';
-    //  $book->binding['type'] = 'soft';
-    //} else {
-    //  echo 'NO BINDING DEFINED FOR THIS BOOK!';
-    //  throw new Exception('NO BINDING DEFINED!');
-    //}
-
-    //// flag first editions
-    //if ($post_meta['Edition'][0] == 'First') {
-    //  $book->firstEdition = 'true';
-    //} else {
-    //  $book->firstEdition = 'false';
-    //}
-
-    //$book->signed = $post_meta['Signed'][0];
-    //$book->booksellerCatalogue = $post_meta['Subject'][0];
-    //$book->bookCondition = $post_meta['Condition'][0];
-    //$book->isbn = $post_meta['ISBN'][0];
-    //$book->size = $post_meta['Size'][0];
-    //$book->jacketCondition = $post_meta['Dust jacket condition'][0];
-    //$book->inscription = $post_meta['Inscription'][0];
-    //// QTY always hardcoded to 1 currently
-    //$book->quantity = 1;
-
-    //if ($post_meta['Book type'][0] == 'Ex-Library') {
-    //  $book->bookType = 'Ex-Library';
-    //} else {
-    //  $book->bookType = '';
-    //}
-
-
+    $book_row[3] = str_replace(',', ' ', $content);
 
     echo '<br />';
     echo join(',', $book_row);
 endwhile;
-
-
-
 
 ?>
 

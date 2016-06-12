@@ -1,0 +1,9 @@
+
+# BEGIN alti-watermark Plugin
+<ifModule mod_rewrite.c>
+	RewriteEngine on
+	RewriteCond %{REQUEST_FILENAME} -f
+	RewriteRule ^(.*(?<!-\dx\d)(?<!-\d\dx\d)(?<!-\dx\d\d)(?<!-\d\dx\d\d)(?<!-\d\d\dx\d\d)(?<!-\d\dx\d\d\d)(?<!-\d\d\dx\d\d\d)(?<!-\d\d\d\dx\d\d\d)(?<!-\d\d\d\dx\d\d)(?<!-\d\d\dx\d\d\d\d)(?<!-\d\d\d\dx\d\d\d\d)(?<!-\d\d\d\dx\d\d\d)(?<!-\d\d\d\dx\d\d)(?<!-\d\d\d\d\dx\d\d\d\d\d)(?<!-\d\d\d\dx\d\d\d\d\d)(?<!-\d\d\d\d\dx\d\d\d\d)(?<!-\d\d\dx\d\d\d\d\d)(?<!-\d\d\d\d\dx\d\d\d)\.jpg){1}((\?|\&)([^\.\?\ ]+))*$ ../plugins/alti-watermark/public/views/alti-watermark-public-bridge.php?imageRequested=$1 [PT]
+</ifModule>
+# [date=2016-06-11 09:35.38] [php=7.0.0] [width=fullsize] [plugin_name=alti-watermark] [version=0.3]
+# END alti-watermark Plugin

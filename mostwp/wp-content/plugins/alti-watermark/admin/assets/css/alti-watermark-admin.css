@@ -1,0 +1,48 @@
+#wrap.alti-watermark h2 {
+	font-size: 30px;
+}
+#wrap.alti-watermark h2 span, #wrap.alti-watermark h2 span * {
+	font-size: 14px;
+	color: #238ECB;
+}
+#wrap.alti-watermark .description {
+	color: #666;
+}
+#wrap.alti-watermark .small {
+	font-size: .8em;
+	font-style: none !important;
+}
+#wrap.alti-watermark .alert {
+	font-size: .9em;
+	color: #238ECB;
+}
+#wrap.alti-watermark label span.dashicons-image-crop:before {
+	font-size: 16px !important;
+	color: #aaa;
+}
+#wrap.alti-watermark th label span.dashicons {
+	color: #238ECB;
+	margin: 0 5px 10px 0;
+}
+#wrap.alti-watermark img.watermark {
+	border: 1px solid #ccc;
+	padding: 5px;
+}
+#wrap.alti-watermark .alti-watermark-footer {
+	border-left: 0 !important;
+	margin-left: 0 !important;
+	overflow: hidden;
+	padding: 15px !important;
+	margin-top: 30px;
+}
+#wrap.alti-watermark .alti-watermark-footer .logo {
+	float: left;
+	margin-right: 20px;
+}
+#wrap.alti-watermark .alti-watermark-footer .share a {
+	display: inline-block;
+	padding: 5px 10px;
+	background: #238ECB;
+	color: #fff;
+	margin: 0 5px 0 0;
+}
