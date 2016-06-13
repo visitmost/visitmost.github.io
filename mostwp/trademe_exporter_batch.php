@@ -106,6 +106,11 @@ while ( $events_query->have_posts() ) :
     // get all the post meta
     $post_meta = get_post_meta($post_id);
 
+    // exclude those which have been sold
+    if (strlen($post_meta['Sold date'][0]) > 0) {
+      continue;
+    }
+
     $year = $post_meta['Year'][0];
 
     //category: < 1950 is 1822, modern is 1823
@@ -187,61 +192,84 @@ while ( $events_query->have_posts() ) :
     $content = str_replace(":",' ', $content);
     $content = rtrim($content);
 
+    // remove last char if '.' - will be appended to by other meta
+    $content = rtrim($content, ".");
+
     $slug = $content_post->post_name;
 
+    $content =  $post_meta['Author'][0] 
+                . '.  ' 
+                . $post_meta['Publisher'][0]
+                . '. '
+                . $post_meta['Published location'][0]
+                . '. '
+                . $year
+                . '. '
+                . $content;
+
+    if (strlen($post_meta['Condition'][0]) > 0 && $post_meta['Condition'][0] != 'null') {
+      $content .= '. '
+                  . ucfirst(strtolower($post_meta['Condition'][0]))
+                  . ' condition'; 
+    }
     
-    $content =  $post_meta['Author'][0] . '.  ' . $post_meta['Publisher'][0]  . '. '. $post_meta['Published location'][0]  . '. ' . $year . '. ' . $content;
+    if (strlen($post_meta['Dust jacket condition'][0]) > 0 && $post_meta['Dust jacket condition'][0] != 'null') {
+      $content .= '. '
+                  . ucfirst(strtolower($post_meta['Dust jacket condition'][0]))
+                  . ' dust jacket'; 
+    }
 
-    $content = $content . '. More images of this book may be available at http://visitmost.github.io/' . $slug;
+    if (strlen($post_meta['Subject'][0]) > 0 && $post_meta['Subject'][0] != 'null') {
+      $content .= '. '
+                  . $post_meta['Subject'][0];
+    }
 
-    $book_row[10] = str_replace(',', ' ', $content);
+    if ( $post_meta['Binding'][0] == 'Hardback' || $post_meta['Binding'][0] == 'Hardcover') {
+      $content .= '. '
+                  . 'Hardback';
+    } else if ( $post_meta['Binding'][0] == 'Paperback' || $post_meta['Binding'][0] == 'Softcover' ) {
+      $content .= '. '
+                  . 'Softcover';
+    } 
 
+    // flag first editions
+    if ($post_meta['Edition'][0] == 'First') {
+      $content .= '. '
+                  . 'First edition';
+    }
 
-    //$book->dustJacket = $post_meta['Dust jacket condition'][0];
-    //$book->subject = $post_meta['Subject'][0];
+    if (strlen($post_meta['Signed'][0]) > 0 && $post_meta['Signed'][0] != 'null') {
+      $content .= '. '
+                  . 'Signed copy';
+    }
 
-    //// update binding attribute and values
-    //if ( $post_meta['Binding'][0] == 'Hardback' || $post_meta['Binding'][0] == 'Hardcover') {
-    //  $book->binding = 'Hardback';
-    //} else if ( $post_meta['Binding'][0] == 'Paperback' || $post_meta['Binding'][0] == 'Softcover' ) {
-    //  $book->binding = 'Paperback';
-    //  $book->binding['type'] = 'soft';
-    //} else {
-    //  echo 'NO BINDING DEFINED FOR THIS BOOK!';
-    //  throw new Exception('NO BINDING DEFINED!');
-    //}
+    if (strlen($post_meta['ISBN'][0]) > 0 && $post_meta['ISBN'][0] != 'null') {
+      $content .= '. ISBN: '
+                  . $post_meta['ISBN'][0];
+    }
 
-    //// flag first editions
-    //if ($post_meta['Edition'][0] == 'First') {
-    //  $book->firstEdition = 'true';
-    //} else {
-    //  $book->firstEdition = 'false';
-    //}
-
-    //$book->signed = $post_meta['Signed'][0];
-    //$book->booksellerCatalogue = $post_meta['Subject'][0];
-    //$book->bookCondition = $post_meta['Condition'][0];
-    //$book->isbn = $post_meta['ISBN'][0];
     //$book->size = $post_meta['Size'][0];
-    //$book->jacketCondition = $post_meta['Dust jacket condition'][0];
     //$book->inscription = $post_meta['Inscription'][0];
     //// QTY always hardcoded to 1 currently
     //$book->quantity = 1;
 
-    //if ($post_meta['Book type'][0] == 'Ex-Library') {
-    //  $book->bookType = 'Ex-Library';
-    //} else {
-    //  $book->bookType = '';
-    //}
+    if ($post_meta['Book type'][0] == 'Ex-Library') {
+      $content .= '. '
+                  . 'Ex-Library';
+    }
 
+    $content = $content 
+                . "." 
+                . ' More images of this book may be available at http://visitmost.github.io/' . $slug;
 
+    // max 2048 chars in description
+    $content = substr($content,0,2048);
+
+    $book_row[10] = str_replace(',', ' ', $content);
 
     echo '<br />';
     echo join(',', $book_row);
 endwhile;
-
-
-
 
 ?>
 

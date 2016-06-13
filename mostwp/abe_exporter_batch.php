@@ -1,5 +1,7 @@
 <?php
 
+header("Content-Type: text/plain; charset=utf-8");
+
 // get WP system loaded
 require_once(dirname(__FILE__) . '/wp-load.php');
 
@@ -82,8 +84,8 @@ while ( $exportable_posts_query->have_posts() ) :
     $book->vendorBookID = $post_id;
 
     $title = get_the_title($post_id);
-    $title = str_replace("&#8217;","'", $title);
-    $book->title = $title;
+
+    $title = utf_encode($title);
 
     $book->author = $post_meta['Author'][0];
     $book->publisher = $post_meta['Publisher'][0];
@@ -135,6 +137,7 @@ while ( $exportable_posts_query->have_posts() ) :
 
     $slug = $content_post->post_name;
 
+    // links are not allowed on abes
     //$content = $content . ' More images of this book may be available at: http://visitmost.github.io/' . $slug;
     $content = $content . ' More images of this book may be available on our homepage';
 
@@ -179,7 +182,7 @@ $book_to_export = str_replace('null', '', $book_to_export);
 
 <html>
 <head>
-		<meta charset="ISO-8859-1" />
+    <meta charset="UTF-8" />
 </head>
 
 <script>

@@ -1,5 +1,8 @@
 <?php
 
+//header("Content-Type: text/plain; charset=UTF-8");
+ini_set('default_charset', 'utf-8');
+
 // get WP system loaded
 require_once(dirname(__FILE__) . '/wp-load.php');
 
@@ -70,7 +73,8 @@ $book = new SimpleXMLElement($xml);
 $book->AbebookList->Abebook->vendorBookID = $post_id;
 
 $title = get_the_title($post_id);
-$title = str_replace("&#8217;","'", $title);
+$title = iconv('ISO-8859-1', 'UTF-8//IGNORE', $title);
+
 $book->AbebookList->Abebook->title = $title;
 $book->AbebookList->Abebook->author = $post_meta['Author'][0];
 $book->AbebookList->Abebook->publisher = $post_meta['Publisher'][0];
@@ -101,7 +105,9 @@ $book->AbebookList->Abebook->booksellerCatalogue = $post_meta['Subject'][0];
 
 // compile a pretty description, including meta already known + actual post description
 $content_post = get_post($post_id);
+
 $content = $content_post->post_content;
+$content = iconv('ISO-8859-1', 'UTF-8//IGNORE', $content);
 $content = apply_filters('the_content', $content);
 $content = str_replace(']]>', ']]&gt;', $content);
 $content = str_replace('&', 'and', $content);
@@ -118,12 +124,12 @@ $content = str_replace("#038;",'', $content);
 $content = str_replace("#8211;",'', $content);
 $content = str_replace(":",' ', $content);
 $content = rtrim($content);
+// remove last char if '.' - will be appended to by other meta
+$content = rtrim($content, ".");
 
 $slug = $content_post->post_name;
 
-$content = $content . '
-
-More images of this book may be available at http://visitmost.github.io/' . $slug;
+$content .= '. More images of this book may be available on our homepage';
 
 $book->AbebookList->Abebook->description = $content;
 $book->AbebookList->Abebook->bookCondition = $post_meta['Condition'][0];
@@ -190,7 +196,7 @@ if ( ! add_post_meta( $post_id, 'Abe Images Updated', date('Y-m-d H:i:s'), true 
 
 <html>
 <head>
-		<meta charset="ISO-8859-1" />
+    <meta charset="UTF-8" />
 </head>
 
 <?
