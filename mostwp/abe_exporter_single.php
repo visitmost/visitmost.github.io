@@ -170,21 +170,44 @@ if ($send_images == True){
 }
 
 $x = 1;
-foreach ($images as $image) {
-  $image_url = $image->getAttribute('src');
-  $book_images[] = $image_url;
+if ($images->length == 0) {
+  $image_dom = new domDocument;
+  $image_dom->loadHTML(get_the_post_thumbnail( $post_id, 'full' ));
+  $images = $image_dom->getElementsByTagName('img');
+  foreach ($images as $image) {
+    $image_url = $image->getAttribute('src');
+    $book_images[] = $image_url;
 
-  $remote_file = $post_id . '_' . $x . '.jpg';
+    $remote_file = $post_id . '_' . $x . '.jpg';
 
-  if ($send_images == True){
-    $local_image_url = str_replace('http://localhost:8888', '', $image_url);
+    if ($send_images == True){
+      $local_image_url = str_replace('http://localhost:8888', '', $image_url);
 
-    if ($x < 6){
-      $sftp->put($remote_file, '/Users/leon/visitmost.github.io/mostwp' . $local_image_url, NET_SFTP_LOCAL_FILE);
+      if ($x < 6){
+        $sftp->put($remote_file, '/Users/leon/visitmost.github.io/mostwp' . $local_image_url, NET_SFTP_LOCAL_FILE);
+      }
     }
-  }
 
-  $x += 1;
+    $x += 1;
+  }
+} else {
+
+  foreach ($images as $image) {
+    $image_url = $image->getAttribute('src');
+    $book_images[] = $image_url;
+
+    $remote_file = $post_id . '_' . $x . '.jpg';
+
+    if ($send_images == True){
+      $local_image_url = str_replace('http://localhost:8888', '', $image_url);
+
+      if ($x < 6){
+        $sftp->put($remote_file, '/Users/leon/visitmost.github.io/mostwp' . $local_image_url, NET_SFTP_LOCAL_FILE);
+      }
+    }
+
+    $x += 1;
+  }
 }
 
 if ( ! add_post_meta( $post_id, 'Abe Images Updated', date('Y-m-d H:i:s'), true ) ) { 
