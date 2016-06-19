@@ -160,7 +160,8 @@ while ( $events_query->have_posts() ) :
     
     $content =  $post_meta['Author'][0] . '.  ' . $post_meta['Publisher'][0]  . '. '. $post_meta['Published location'][0]  . '. ' . $year . '. ' . $content;
 
-    $content = $content . '. More images of this book may be available at http://visitmost.github.io/' . $slug;
+    //$content = $content . '. More images of this book may be available at http://visitmost.github.io/' . $slug;
+    $content = $content . '. More images of this book may be available on our homepage.';
 
     $book_row[3] = str_replace(',', ' ', $content);
 
