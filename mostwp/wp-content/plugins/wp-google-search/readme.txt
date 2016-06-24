@@ -3,8 +3,8 @@ Contributors: WebshopLogic
 Donate link: http://webshoplogic.com/donation-wp-google-search/
 Tags: WP Google Search, Google Search, Google Custom Search, Google, SCE, GCSE, Wordpress Google Search
 Requires at least: 3.7
-Tested up to: 4.2.2
-Stable tag: 1.0.4
+Tested up to: 4.5.2
+Stable tag: 1.0.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,9 +32,10 @@ It does not require any coding, or other complicated operation.
 * English
 * Spanish - translated by Ogi Djuraskovic - http://firstsiteguide.com
 * Serbian - translated by Ogi Djuraskovic - http://firstsiteguide.com
-* Portuguese (BR) - translated by Gabriel Fr�es
+* Portuguese (BR) - translated by Gabriel Froes
 * Swedish - translated by Tobias - http://ComClick.se
 * Danish - translated by Alexander Leo-Hansen - http://alexanderleohansen.dk
+* Russian - translated by Timofeev Ilya 
 
 
 == Installation ==
@@ -60,6 +61,10 @@ It does not require any coding, or other complicated operation.
 
 
 == Changelog ==
+
+= 1.0.5 =
+* Add Russian translation
+* Add target link blank option
 
 = 1.0.4 =
 * Add Swedish translation

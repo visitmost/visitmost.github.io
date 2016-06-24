@@ -3,16 +3,16 @@ Contributors: walkeprashant
 Donate link:https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=387BZU5UNQ4LA	
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Tags: Database backup,db backup ,backup, WordPress Database Backup, WP db backup,wp database backup,wp backup,wordpress backup, mysql backup,automatically database backup,website backup,website database backup,restore database backup,Store database backup on dropbox,ftp,email notification.
+Tags: Database backup,db backup ,backup, WordPress Database Backup, WP db backup,wp database backup,wp backup,wordpress backup, mysql backup,automatically database backup,website backup,website database backup,restore database backup,Store database backup on dropbox,backup on google drive,backup on amazon s3,ftp,email notification.
 Requires at least: 3.1+
 Tested up to: 4.5
 Stable tag: trunk
 
-WP Database Backup plugin helps you to create Database Backup and Restore Database Backup easily on single click.Manual or automated backups.
+Create & Restore Database Backup easily on single click. Manual or automated backups (backup to Dropbox,Google drive,Amazon s3,FTP,Email).
 
 == Description ==
 
-WP Database Backup plugin helps you to create Database Backup and Restore Database Backup easily on single click.Manual or Automated Database Backups And also store database backup on safe place- dropbox,FTP,Email
+WP Database Backup plugin helps you to create Database Backup and Restore Database Backup easily on single click.Manual or Automated Database Backups And also store database backup on safe place- Dropbox,FTP,Email,Google drive
 
 = Features =
 <ul>
@@ -20,7 +20,7 @@ WP Database Backup plugin helps you to create Database Backup and Restore Databa
 WP Database Backup plugin helps you to create Database Backup easily on single click.</li>
 
 <li>Autobackup
-Backup automatically on a repeating schedule</li>
+Backup automatically on a repeating <strong>schedule</strong></li>
 
 <li>Download backup file direct from your WordPress dashboard</li>
 
@@ -31,9 +31,10 @@ WP Database Backup is super easy to install. </li>
 
 <li>Restore Database Backup
 WP Database Backup plugin helps you to Restore Database Backup easily on single click.</li>
-
-<li>Store database backup on safe place- dropbox,FTP,Email</li>
-<li>Exclude Table</li>
+<li>Multiple storage destinations</li>
+<li>Store database backup on safe place- <strong> Dropbox,Google drive,Amazon s3,FTP,Email</strong></li>
+<li>Reporting- Sends emailed backups and backup reports to any email addresses</li>
+<li><strong>Exclude Table</strong></li>
 <li>Database backup list pagination</li>
 <li>Search backup from list(Date/ Database Size)</li>
 <li>Sort backup list (Date/ Database Size)</li>
@@ -46,7 +47,7 @@ WP Database Backup plugin helps you to Restore Database Backup easily on single 
 <li>Database Backup easily on single click.</li>
 <li>Autobackup.</li>
 <li>Restore Database Backup easily on single click.</li>
-<li>Store database backup on safe place- dropbox,FTP,Email.</li>
+<li>Store database backup on safe place- Dropbox,Google drive,Amazon s3,FTP,Email.</li>
 <li>Pagination.</li>
 <li>Search and sort database backup feature.</li>
 </ul>
@@ -69,9 +70,13 @@ WP Database Backup plugin helps you to Restore Database Backup easily on single 
 <li>Simple one-click <strong>restore</strong></li> 
 <li>Set number of backups to store</li>
 <li>Automatically remove oldest backup</li>
+<li>Multiple storage destinations</li>
 <li><strong>FTP integration</strong></li>
 <li><strong>Dropbox integration</strong></li> 
+<li><strong>Google drive integration</strong></li> 
+<li><strong>Amazon s3 integration</strong></li> 
 <li><strong>Email Notification</strong></li>
+<li>Reporting- Sends emailed backups and backup reports to any email addresses</li>
 <li>ZipArchive</li>
 <li>Backup zip labeled with the site name(Help when backing up multiple sites).</li>
 <li>Select Backup Type: Only Database,Only Files, Complete Backup</li>
@@ -228,6 +233,16 @@ WP Database Backup plugin helps you to Restore Database Backup easily on single 
 * Resolved : undefined function ftp_connect error.
 * Changed  : look and feel.
 
+= 4.1 = 
+* 20-06-2016
+* Added New Feature : Google drive integration.
+* Changes in email notification template
+* Add new Tab : Subscribe
+
+= 4.2 = 
+* 24-06-2016
+* Added New Feature : Amazon s3 integration.
+* Fixed Vulnerability : prevent direct download
 
 == Frequently Asked Questions ==
 
@@ -273,10 +288,9 @@ Also Please make sure that you have write permission to Backup folder and also c
   
 == Upgrade Notice ==
 
-=4.0= 
-* Resolved : time out error. 
-* Resolved : undefined function ftp_connect error.
-* Changed  : look and feel.
+=4.2= 
+* Added New Feature : Amazon s3 integration.
+* Fixed Vulnerability : prevent direct download
 
 == Official Site ==
 * http://www.wpseeds.com/wp-database-backup/

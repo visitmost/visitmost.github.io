@@ -1,4 +1,5 @@
 <?php
+ob_start();
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
@@ -12,14 +13,34 @@ class WPDB_Admin {
         add_filter('cron_schedules', array($this, 'wp_db_backup_cron_schedules'));
         add_action('wp_db_backup_event', array($this, 'wp_db_backup_event_process'));
         add_action('wp', array($this, 'wp_db_backup_scheduler_activation'));
+        add_action('wp_logout', array($this, 'wp_db_cookie_expiration'));////Fixed Vulnerability 22-06-2016 for prevent direct download
     }
 
     public function admin_menu() {
 
         $page = add_management_page('WP-DB Backup', 'WP-DB Backup ', 'manage_options', 'wp-database-backup', array($this, 'wp_db_backup_settings_page'));
     }
+//Start Fixed Vulnerability 22-06-2016 for prevent direct download
+    function wp_db_cookie_expiration() {
+        setcookie('can_download', 0, time() - 300, COOKIEPATH, COOKIE_DOMAIN);
+        if (SITECOOKIEPATH != COOKIEPATH) {
+            setcookie('can_download', 0, time() - 300, SITECOOKIEPATH, COOKIE_DOMAIN);
+        }
+    }
 
     function wp_db_backup_admin_init() {
+        if (isset($_GET['page']) && $_GET['page'] == 'wp-database-backup' && current_user_can('manage_options')) {
+            setcookie('can_download', 1, 0, COOKIEPATH, COOKIE_DOMAIN);
+            if (SITECOOKIEPATH != COOKIEPATH) {
+                setcookie('can_download', 1, 0, SITECOOKIEPATH, COOKIE_DOMAIN);
+            }
+        } else {
+            setcookie('can_download', 0, time() - 300, COOKIEPATH, COOKIE_DOMAIN);
+            if (SITECOOKIEPATH != COOKIEPATH) {
+                setcookie('can_download', 0, time() - 300, SITECOOKIEPATH, COOKIE_DOMAIN);
+            }
+        }
+// End Fixed Vulnerability 22-06-2016 for prevent direct download
         if (is_admin()) {
             if (isset($_POST['wpsetting'])) {
                 if (isset($_POST['wp_local_db_backup_count'])) {
@@ -221,6 +242,7 @@ class WPDB_Admin {
                         <li><a href="#db_info" data-toggle="tab">System Information</a></li>                            
                         <li><a href="#db_help" data-toggle="tab">Help</a></li>
                         <li><a href="#db_advanced" data-toggle="tab">Pro Feature</a></li>
+                        <li><a href="#db_subscribe" data-toggle="tab">Subscribe</a></li>
                     </ul>
 
                     <?php
@@ -466,9 +488,9 @@ class WPDB_Admin {
                                     <div class="col-md-1"><a href="" target="_blank" title="Help"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></div>
                                     <div class="col-md-3"><?php _e('Upload directory URL', 'wpdbbk') ?></div>
                                     <div class="col-md-5"><?php
-                                        $upload_dir = wp_upload_dir();
-                                        echo $upload_dir['baseurl']
-                                        ?></div>
+                                            $upload_dir = wp_upload_dir();
+                                            echo $upload_dir['baseurl']
+                                                    ?></div>
                                     <div class="col-md-3"></div>
                                 </div>
 
@@ -492,8 +514,8 @@ class WPDB_Admin {
                                     <div class="col-md-1"><a href="" target="_blank" title="Help"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></div>
                                     <div class="col-md-3">Memory Limit</div>
                                     <div class="col-md-5"><?php
-                                        echo WP_MEMORY_LIMIT;
-                                        echo '(Max &nbsp;' . WP_MAX_MEMORY_LIMIT;
+                                echo WP_MEMORY_LIMIT;
+                                echo '(Max &nbsp;' . WP_MAX_MEMORY_LIMIT;
                                         ?>)</div>                           
                                 </div>
 
@@ -510,7 +532,7 @@ class WPDB_Admin {
                                     <div class="col-md-3"><?php _e('Database backup directory', 'wpdbbk') ?></div>
                                     <div class="col-md-5"> <?php _e($upload_dir['basedir'] . '/db-backup', 'wpdbbk'); ?></div>
                                     <div class="col-md-1"><?php echo substr(sprintf('%o', fileperms($upload_dir['basedir'] . '/db-backup')), -4);
-                                        ?></div><div class="col-md-2"><?php echo (!is_writable($upload_dir['basedir'] . '/db-backup')) ? '<p class="text-danger"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Not writable </p>' : '<p class="text-success"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> writable</p>';
+                                ?></div><div class="col-md-2"><?php echo (!is_writable($upload_dir['basedir'] . '/db-backup')) ? '<p class="text-danger"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Not writable </p>' : '<p class="text-success"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> writable</p>';
                                         ?></div>
                                 </div>
 
@@ -518,7 +540,7 @@ class WPDB_Admin {
                                     <div class="col-md-1"><a href="" target="_blank" title="Help"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></div>
                                     <div class="col-md-3"><?php _e('Class ZipArchive Present : ', 'wpdbbk') ?></div>
                                     <div class="col-md-5"> <?php
-                                        echo (class_exists('ZipArchive')) ? 'Yes </p>' : '<p class="">No</p>';
+                                echo (class_exists('ZipArchive')) ? 'Yes </p>' : '<p class="">No</p>';
                                         ?></div>
                                     <div class="col-md-3"></div>
                                 </div>                                                                    
@@ -527,8 +549,8 @@ class WPDB_Admin {
                                     <div class="col-md-1"><a href="" target="_blank" title="Help"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></div>
                                     <div class="col-md-3"><?php _e('mysqldump (cmd) Present : ', 'wpdbbk') ?></div>
                                     <div class="col-md-5"> <?php
-                                        $WPDB_Admin = new WPDB_Admin();
-                                        echo ($WPDB_Admin->get_mysqldump_command_path()) ? 'Yes </p>' : '<p class="">No</p>';
+                                $WPDB_Admin = new WPDB_Admin();
+                                echo ($WPDB_Admin->get_mysqldump_command_path()) ? 'Yes </p>' : '<p class="">No</p>';
                                         ?></div>
                                     <div class="col-md-3"></div>
                                 </div>
@@ -717,33 +739,33 @@ class WPDB_Admin {
                                 <div class="row">
                                     <button class="btn btn-primary" type="button">
                                         Drafts Post Count <span class="badge"><?php
-                                            $count_posts = wp_count_posts();
-                                            echo $count_posts->draft;
-                                            ?></span>
+                            $count_posts = wp_count_posts();
+                            echo $count_posts->draft;
+                                    ?></span>
                                     </button>
                                     <button class="btn btn-primary" type="button">
                                         Publish Post Count <span class="badge"><?php
-                                            ;
-                                            echo $count_posts->publish;
-                                            ?></span>
+                                    ;
+                                    echo $count_posts->publish;
+                                    ?></span>
                                     </button>
                                     <button class="btn btn-primary" type="button">
                                         Drafts Pages Count <span class="badge"><?php
-                                            $count_pages = wp_count_posts('page');
-                                            echo $count_pages->draft;
-                                            ?></span>
+                                    $count_pages = wp_count_posts('page');
+                                    echo $count_pages->draft;
+                                    ?></span>
                                     </button>
                                     <button class="btn btn-primary" type="button">
                                         Publish Pages Count <span class="badge"><?php
-                                            ;
-                                            echo $count_pages->publish;
-                                            ?></span>
+                                    ;
+                                    echo $count_pages->publish;
+                                    ?></span>
                                     </button>
                                     <button class="btn btn-primary" type="button">
                                         Approved Comments Count <span class="badge"><?php
-                                            $comments_count = wp_count_comments();
-                                            echo $comments_count->approved;
-                                            ?></span>
+                                    $comments_count = wp_count_comments();
+                                    echo $comments_count->approved;
+                                    ?></span>
                                     </button>
                                 </div>
                             </div>
@@ -910,107 +932,55 @@ class WPDB_Admin {
 
 
                 </div>
-                <?php
-                echo '<div class="tab-pane" id="db_destination">';
-                ?>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseI">
-                                <h2>FTP/sFTP </h2>
-
-                            </a>
-                        </h4>
+                <div class="tab-pane" id="db_subscribe">
+                    <!-- Begin MailChimp Signup Form -->
+                    <link href="//cdn-images.mailchimp.com/embedcode/classic-10_7.css" rel="stylesheet" type="text/css">
+                    <style type="text/css">
+                        #mc_embed_signup{background:#fff; clear:left; font:14px Helvetica,Arial,sans-serif; }
+                    </style>
+                    <div id="mc_embed_signup">
+                        <form action="//wpseeds.us11.list-manage.com/subscribe/post?u=e82affc7dc8dacb76c07be2b6&amp;id=bbdb8550e7" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+                            <div id="mc_embed_signup_scroll">
+                                <h2>Subscribe to our mailing list for update,tips etc.</h2>
+                                <div class="indicates-required"><span class="asterisk">*</span> indicates required</div>
+                                <div class="mc-field-group">
+                                    <label for="mce-EMAIL">Email Address  <span class="asterisk">*</span>
+                                    </label>
+                                    <input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL">
+                                </div>
+                                <div id="mce-responses" class="clear">
+                                    <div class="response" id="mce-error-response" style="display:none"></div>
+                                    <div class="response" id="mce-success-response" style="display:none"></div>
+                                </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+                                <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_e82affc7dc8dacb76c07be2b6_bbdb8550e7" tabindex="-1" value=""></div>
+                                <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+                            </div>
+                        </form>
                     </div>
-                    <div id="collapseI" class="panel-collapse collapse in">
-                        <div class="panel-body">
-                            <p>FTP/sFTP Destination Define an FTP destination connection. You can define destination which use FTP.</p>
-                            <?php include plugin_dir_path(__FILE__) . 'Destination/FTP/ftp-form.php'; ?>
-                        </div>		
-                    </div>
+                    <script type='text/javascript' src='//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script><script type='text/javascript'>(function ($) {
+                            window.fnames = new Array();
+                            window.ftypes = new Array();
+                            fnames[0] = 'EMAIL';
+                            ftypes[0] = 'email';
+                            fnames[1] = 'FNAME';
+                            ftypes[1] = 'text';
+                            fnames[2] = 'LNAME';
+                            ftypes[2] = 'text';
+                        }(jQuery));
+                        var $mcj = jQuery.noConflict(true);</script>
+                    <!--End mc_embed_signup-->
                 </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseII">
-                                <h2>Email Notification</h2>
-
-                            </a>
-                        </h4>
-                    </div>
-                    <div id="collapseII" class="panel-collapse collapse in">
-                        <div class="panel-body">
-
-                            <?php
-                            echo '<form name="wp-email_form" method="post" action="" >';
-
-                            $wp_db_backup_email_id = "";
-                            $wp_db_backup_email_id = get_option('wp_db_backup_email_id');
-                            $wp_db_backup_email_attachment = "";
-                            $wp_db_backup_email_attachment = get_option('wp_db_backup_email_attachment');
-                            echo '<p>';
-                            echo '<span class="glyphicon glyphicon-envelope"></span> Send Email Notification</br></p>';
-                            echo '<div class="row form-group"><label class="col-sm-2" for="wp_db_backup_email_id">Email Id</label>';
-                            echo '<div class="col-sm-6"><input type="text" id="wp_db_backup_email_id" class="form-control" name="wp_db_backup_email_id" value="' . $wp_db_backup_email_id . '" placeholder="Your Email Id"></div>';
-                            echo '<div class="col-sm-4">Leave blank if you don\'t want use this feature</div></div>';
-                            echo '<div class="row form-group"><label class="col-sm-2" for="lead-theme">Attach backup file </label> ';
-                            $selected_option = get_option('wp_db_backup_email_attachment');
-
-                            if ($selected_option == "yes")
-                                $selected_yes = "selected=\"selected\"";
-                            else
-                                $selected_yes = "";
-                            if ($selected_option == "no")
-                                $selected_no = "selected=\"selected\"";
-                            else
-                                $selected_no = "";
-                            echo '<div class="col-sm-2"><select id="lead-theme" class="form-control" name="wp_db_backup_email_attachment">';
-                            echo '<option value="none">Select</option>';
-
-                            echo '<option  value="yes"' . $selected_yes . '>Yes</option>';
-                            echo '<option  value="no" ' . $selected_no . '>No</option>';
-
-
-                            echo '</select></div>';
-
-                            echo '<div class="col-sm-8">If you want attache backup file to email then select "yes" (File attached only when backup file size <=25MB)</div>';
-
-                            echo '</div>';
-                            echo '<p class="submit">';
-                            echo '<input type="submit" name="Submit" class="btn btn-primary" value="Save Settings" />';
-                            echo '</p>';
-                            echo '</form>';
-                            ?>
-                        </div>		
-                    </div>
+                <div class="tab-pane" id="db_destination">
+        <?php
+        include plugin_dir_path(__FILE__) . 'Destination/wp-backup-destination.php';
+        ?>
                 </div>
 
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseIII">
-                                <h2>Dropbox </h2>
-
-                            </a>
-                        </h4>
-                    </div>
-                    <div id="collapseIII" class="panel-collapse collapse in">
-                        <div class="panel-body">
-
-                            <?php include plugin_dir_path(__FILE__) . 'Destination/Dropbox/dropboxupload.php'; ?>
-                        </div>		
-                    </div>
-                </div>
-
-                <?php
-                echo '</div>';
-                ?>
 
 
 
             </div> 
 
-            <div class="panel panel-footer">Thank you for using the <a href="http://walkeprashant.wordpress.com/wp-database-backup/" target="_blank">WP Database Backup</a>.</div>
         </div>
 
         <?php
@@ -1292,13 +1262,20 @@ class WPDB_Admin {
         wp_mkdir_p($path_info['basedir'] . '/db-backup');
         fclose(fopen($path_info['basedir'] . '/db-backup/index.php', 'w'));
         //added htaccess file 08-05-2015 for prevent directory listing
-        // fclose(fopen($path_info['basedir'].'/db-backup/.htaccess', $htassesText));
-        // $f = fopen($path_info['basedir'].'/db-backup/.htaccess', "w");
-        //  fwrite($f, "IndexIgnore *");
-        //  fclose($f);         
+        //Fixed Vulnerability 22-06-2016 for prevent direct download
+        fclose(fopen($path_info['basedir'] . '/db-backup/.htaccess', $htassesText));
+        $f = fopen($path_info['basedir'] . '/db-backup/.htaccess', "w");
+        fwrite($f, "#These next two lines will already exist in your .htaccess file
+ RewriteEngine On
+ RewriteBase /
+ # Add these lines right after the preceding two
+ RewriteCond %{REQUEST_FILENAME} ^.*(.zip)$
+ RewriteCond %{HTTP_COOKIE} !^.*can_download.*$ [NC]
+ RewriteRule . - [R=403,L]");
+        fclose($f);
         /* Begin : Generate SQL DUMP and save to file database.sql */
         $siteName = preg_replace('/[^A-Za-z0-9\_]/', '_', get_bloginfo('name'));
-        $WPDBFileName = $siteName . '_' . Date("Y_m_d") . '_' . Time("H:M:S") . rand(9, 9999) . '_database';
+        $WPDBFileName = $siteName . '_' . Date("Y_m_d") . '_' . Time("H:M:S") . "_" . substr(md5(AUTH_KEY), 0, 7) . '_wpdb';
         $SQLfilename = $WPDBFileName . '.sql';
         $filename = $WPDBFileName . '.zip';
 
@@ -1417,55 +1394,7 @@ class WPDB_Admin {
         } else {
             $logMessage = "";
         }
-        //FTP
-        include plugin_dir_path(__FILE__) . 'Destination/FTP/preflight.php';
-        $filename = $details['filename'];
-        $filename = $details['filename'];
-        include plugin_dir_path(__FILE__) . 'Destination/FTP/sendaway.php';
 
-        //Dropbox
-        $dropb_autho = get_option('dropb_autho');
-        if ($dropb_autho == "yes") {
-            include plugin_dir_path(__FILE__) . 'Destination/Dropbox/dropboxupload.php';
-
-
-            $wp_upload_dir = wp_upload_dir();
-
-            $wp_upload_dir['basedir'] = str_replace('\\', '/', $wp_upload_dir['basedir']);
-
-            $localfile = trailingslashit($wp_upload_dir['basedir'] . '/db-backup/') . $filename;
-
-
-            $dropbox->UploadFile($localfile, $filename);
-            $logMessage.=" Upload Database Backup on Dropbox";
-        }
-
-        //Email
-        if (get_option('wp_db_backup_email_id')) {
-            $to = get_option('wp_db_backup_email_id');
-            $subject = "Database Backup Created Successfully";
-            $filename = $details['filename'];
-            $filesze = $details['size'];
-            $site_url = site_url();
-            $logMessageAttachment="";
-
-            include('template_email_notification.php');
-
-
-            $headers = array('Content-Type: text/html; charset=UTF-8');
-            $wp_db_backup_email_attachment_file = get_option('wp_db_backup_email_attachment');
-            if ($wp_db_backup_email_attachment_file == "yes" && $details['size'] <= 209700000) {
-                $wp_upload_dir = wp_upload_dir();
-                $wp_upload_dir['basedir'] = str_replace('\\', '/', $wp_upload_dir['basedir']);
-                $filename = $details['filename'];
-                $attachments = trailingslashit($wp_upload_dir['basedir'] . '/db-backup') . $filename;
-                $logMessageAttachment = " with attached backup file.";
-            } else
-                $attachments = "";
-            wp_mail($to, $subject, $message, $headers, $attachments);
-            $logMessage.=" Send Backup Mail to:" . $to;
-            $logMessage.=$logMessageAttachment;
-        }
         $options[] = array(
             'date' => time(),
             'filename' => $details['filename'],
@@ -1476,6 +1405,8 @@ class WPDB_Admin {
             'size' => $details['size']
         );
         update_option('wp_db_backup_backups', $options);
+        $args = array($details['filename'], $details['dir'], $logMessage, $details['size']);
+        do_action_ref_array('wp_db_backup_completed', array(&$args));
     }
 
     public function wp_db_backup_cron_schedules($schedules) {

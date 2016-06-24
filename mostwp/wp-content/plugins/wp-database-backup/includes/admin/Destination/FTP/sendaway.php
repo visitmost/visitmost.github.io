@@ -75,6 +75,7 @@ if (!$success = ftp_put($conn, $remotefile, $localfile, FTP_BINARY)) {
 } 
 else {
  //error_log( '<div class="error">File was uploaded successfully <br /></div>');
+    $args[2]=$args[2].'<br> Upload Database Backup on FTP '.$host;
              }
       }
 }

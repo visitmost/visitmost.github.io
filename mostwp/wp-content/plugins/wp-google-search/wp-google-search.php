@@ -3,13 +3,13 @@
 Plugin Name: WP Google Search
 Plugin URI: http://webshoplogic.com/
 Description: This plugin gives a very simple way to integrate Google Search into your WordPress site.  
-Version: 1.0.4
+Version: 1.0.5
 Author: WebshopLogic
 Author URI: http://webshoplogic.com/
 License: GPLv2 or later
 Text Domain: wgs
 Requires at least: 3.7
-Tested up to: 4.2.2
+Tested up to: 4.5.2
 */
 
 if ( ! class_exists( 'WP_Google_Search' ) ) {
@@ -150,15 +150,19 @@ class WP_Google_Search {
 		$content  = '<div class="wgs_wrapper" id="wgs_wrapper_id">';
 		//$content .= '<gcse:searchresults-only linktarget="_self"></gcse:searchresults-only>';
 		
-		//You can use HTML5-valid div tags as long as you observe these guidelines: //20140423
-		//The class attribute must be set to gcse-XXX
-		//Any attributes must be prefixed with data-.
-		//$content .= '<gcse:' . $gcse_code . ' linktarget="_self"></gcse:' . $gcse_code . '>';
-		$content .= '<div class="gcse-' . $gcse_code . '" data-linktarget="_self"></div>';
-		
-		$content .= '</div>';
+		if ( $options['linktarget_blank'] == 1 ) {
+			$content .= '<div class="gcse-' . $gcse_code . '" data-linktarget="_blank"></div>';
+		} else {
+			//You can use HTML5-valid div tags as long as you observe these guidelines: //20140423
+			//The class attribute must be set to gcse-XXX
+			//Any attributes must be prefixed with data-.
+			//$content .= '<gcse:' . $gcse_code . ' linktarget="_self"></gcse:' . $gcse_code . '>';
+			$content .= '<div class="gcse-' . $gcse_code . '" data-linktarget="_self"></div>';
+		}
 
 		$content = apply_filters('wgs_shortcode_content', $content);
+		
+		$content .= '</div>';
 		
 		return $content;
 		

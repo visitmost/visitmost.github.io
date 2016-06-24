@@ -59,6 +59,14 @@ class WGS_Admin_Page {
 			'wgs_general_settings', // Page / tab page
 			'wgs_general_section' // Section           
 		);
+
+		add_settings_field(
+			'linktarget_blank', // ID
+			__('Link Target Blank','wgs'), // Title 
+			array($this, 'posttype_callback'), // Callback
+			'wgs_general_settings', // Page / tab page
+			'wgs_general_section' // Section           
+		);
 		
 		add_settings_field(
 			'use_default_correction_css', // ID
@@ -93,6 +101,7 @@ class WGS_Admin_Page {
 		$options = wp_parse_args( $options, array(
 			'google_search_engine_id' => '', 
 			'searchbox_before_results' => '0',
+			'linktarget_blank' => '0',
 			'support_overlay_display' => '0',
 			'use_default_correction_css' => '1',
 		) );
@@ -161,6 +170,21 @@ class WGS_Admin_Page {
 			 
 
 						<tr valign="top">
+							<th scope="row"><?php echo __('Link Target Blank','wgs') . ':' ?></th>
+							<td>
+								<?php
+								printf(
+									'<input type="hidden" name="wgs_general_settings[linktarget_blank]" value="0"/>
+									<input type="checkbox" id="linktarget_blank" name="wgs_general_settings[linktarget_blank]"
+									value="1"' . checked( 1, esc_attr( $options['linktarget_blank']), false ) . ' />'
+								);
+								echo '<br /><span class="description">' . __('Display content of the links of the result set on new browser tab.','wgs') . '</span>';
+									
+								?>    
+							</td>
+						</tr>							
+			 
+						<tr valign="top">
 							<th scope="row"><?php echo __('Support Overlay Display','wgs') . ':' ?></th>
 							<td>
 								<?php
@@ -174,7 +198,6 @@ class WGS_Admin_Page {
 								?>    
 							</td>
 						</tr>							
-			 
 			 
 						<tr valign="top">
 							<th scope="row"><?php echo __('Use default corrections CSS','wgs') . ':' ?></th>
