@@ -1,6 +1,5 @@
 <?php
-
-header("Content-Type: text/plain; charset=utf-8");
+//header("Content-Type: text/plain; charset=utf-8");
 
 // get WP system loaded
 require_once(dirname(__FILE__) . '/wp-load.php');
@@ -83,12 +82,12 @@ while ( $exportable_posts_query->have_posts() ) :
     // modify XML values as required
     $book->vendorBookID = $post_id;
 
-    $title = get_the_title($post_id);
+    $book->title = get_the_title($post_id);
 
-    $title = utf_encode($title);
+    //$title = utf_encode($title);
 
     $book->author = $post_meta['Author'][0];
-    $book->publisher = $post_meta['Publisher'][0];
+    $book->publisher = str_replace('&', 'and', $post_meta['Publisher'][0]);
     $book->subject = $post_meta['Subject'][0];
     $book->price = $post_meta['Price'][0];
     $book->dustJacket = $post_meta['Dust jacket condition'][0];
@@ -179,7 +178,6 @@ $book_to_export = $compiled_book->asXML();
 $book_to_export = html_entity_decode($book_to_export);
 $book_to_export = str_replace('null', '', $book_to_export);
 ?>
-
 <html>
 <head>
     <meta charset="UTF-8" />
